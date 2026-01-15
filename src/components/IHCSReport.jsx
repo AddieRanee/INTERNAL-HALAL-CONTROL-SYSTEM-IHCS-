@@ -22,20 +22,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
   },
 
+  // ================= HEADER / FOOTER =================
   headerTable: {
     borderWidth: 1.2,
     borderColor: "#000",
     width: "100%",
     marginBottom: 25,
   },
-
   headerRow: {
     flexDirection: "row",
     borderBottomWidth: 1.2,
     borderColor: "#000",
     alignItems: "stretch",
   },
-
   logoCell: {
     width: "22%",
     borderRightWidth: 1.2,
@@ -44,13 +43,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 6,
   },
-
   logo: {
     width: 55,
     height: 55,
     objectFit: "contain",
   },
-
   companyNameCell: {
     width: "35%",
     borderRightWidth: 1.2,
@@ -60,12 +57,10 @@ const styles = StyleSheet.create({
     padding: 4,
     flexWrap: "wrap",
   },
-
   infoRightCell: {
     width: "43%",
     flexDirection: "column",
   },
-
   infoRow: {
     flexDirection: "row",
     borderBottomWidth: 1.2,
@@ -73,7 +68,6 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     height: 22,
   },
-
   infoLabel: {
     width: "50%",
     borderRightWidth: 1.2,
@@ -84,7 +78,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     textAlign: "left",
   },
-
   infoValue: {
     width: "50%",
     fontSize: 9,
@@ -92,7 +85,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     textAlign: "left",
   },
-
   bottomRow: {
     flexDirection: "row",
     borderTopWidth: 1.2,
@@ -100,7 +92,6 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     minHeight: 25,
   },
-
   bottomLeft: {
     width: "57%",
     borderRightWidth: 1.2,
@@ -109,7 +100,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
-
   bottomMiddle: {
     width: "21.5%",
     borderRightWidth: 1.2,
@@ -118,7 +108,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 8,
   },
-
   bottomRight: {
     width: "21.5%",
     justifyContent: "center",
@@ -126,254 +115,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 
-  pageNoText: {
-    fontSize: 9,
-    textAlign: "left",
-  },
+  pageNoText: { fontSize: 9, textAlign: "left" },
+  labelText: { fontSize: 9, fontWeight: "bold", flexWrap: "wrap" },
+  normalText: { fontSize: 9, flexWrap: "wrap" },
+  title: { textAlign: "center", fontSize: 20, fontWeight: "bold", marginBottom: 40, letterSpacing: 0.6 },
 
-  labelText: {
-    fontSize: 9,
-    fontWeight: "bold",
-    flexWrap: "wrap",
-  },
+  // ================= COVER PAGE =================
+  logoCover: { alignSelf: "center", marginVertical: 40, width: 220, height: 160, objectFit: "contain" },
+  companyInfo: { textAlign: "center", fontSize: 13, fontWeight: "bold", lineHeight: 1.8, marginBottom: 100 },
+  centeredTitle: { fontSize: 14, fontWeight: "bold", textAlign: "center", marginTop: 300 },
 
-  normalText: {
-    fontSize: 9,
-    flexWrap: "wrap",
-  },
+  // ================= SECTION TITLES =================
+  sectionMainTitle: { fontSize: 16, fontWeight: "bold", textAlign: "center", textDecoration: "underline", marginBottom: 20 },
+  sectionTitle: { fontSize: 12, fontWeight: "bold", marginTop: 12, marginBottom: 4 },
+  paragraph: { fontSize: 10, textAlign: "justify", lineHeight: 1.5, marginBottom: 8 },
 
-  title: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 40,
-    letterSpacing: 0.6,
-  },
-
-  logoCover: {
-    alignSelf: "center",
-    marginVertical: 40,
-    width: 220,
-    height: 160,
-    objectFit: "contain",
-  },
-
-  companyInfo: {
-    textAlign: "center",
-    fontSize: 13,
-    fontWeight: "bold",
-    lineHeight: 1.8,
-    marginBottom: 100,
-  },
-
-  /* COVER PAGE */
-  tableWrapper: {
-    width: "95%",
-    alignSelf: "center",
-    borderWidth: 1.5,
-    borderColor: "#000",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-
-  tableCol: {
-    flex: 1,
-    borderLeftWidth: 1.5,
-    borderColor: "#000",
-  },
-
-  tableHeader: {
-    borderBottomWidth: 1.5,
-    borderColor: "#000",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    fontSize: 12,
-    fontWeight: "bold",
-    backgroundColor: "#f4f4f4",
-  },
-
-  tableCellCover: {
-    fontSize: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    textAlign: "left",
-  },
-
-  coverTable: {
-    width: "95%",
-    alignSelf: "center",
-    borderWidth: 1.5,
-    borderColor: "#000",
-    flexDirection: "row",
-    minHeight: 170,
-  },
-
-  coverCol: {
-    flex: 1,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderColor: "#000",
-    borderRightWidth: 1.5,
-  },
-
-  coverHeader: {
-    fontSize: 13,
-    fontWeight: "bold",
-    marginBottom: 12,
-    paddingBottom: 8,
-    borderBottomWidth: 1.5,
-    borderColor: "#000",
-  },
-
-  coverCell: {
-    fontSize: 12,
-    marginTop: 10,
-  },
-
-  /* TOC */
-  tocMainTitle: {
-    fontSize: 13,
-    fontWeight: "bold",
-    textAlign: "left",
-    marginTop: 40,
-    marginBottom: 15,
-  },
-
-  tocTable: {
-    width: "100%",
-  },
-
-  tocHeaderRow: {
-    flexDirection: "row",
-    borderTopWidth: 1.5,
-    borderBottomWidth: 1.5,
-    borderColor: "#000",
-    paddingVertical: 8,
-  },
-
-  tocHeaderNo: {
-    width: "10%",
-    fontSize: 11,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-
-  tocHeaderTitle: {
-    width: "70%",
-    fontSize: 11,
-    fontWeight: "bold",
-    textAlign: "left",
-    paddingLeft: 10,
-  },
-
-  tocHeaderPage: {
-    width: "20%",
-    fontSize: 11,
-    fontWeight: "bold",
-    textAlign: "right",
-  },
-
-  tocRow: {
-    flexDirection: "row",
-    paddingVertical: 8,
-    borderBottomWidth: 0.5,
-    borderColor: "#ccc",
-  },
-
-  tocNo: {
-    width: "10%",
-    fontSize: 10,
-    textAlign: "center",
-  },
-
-  tocTitleText: {
-    width: "70%",
-    fontSize: 10,
-    textAlign: "left",
-    paddingLeft: 10,
-  },
-
-  tocPageText: {
-    width: "20%",
-    fontSize: 10,
-    textAlign: "right",
-  },
-
-  centeredTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 300,
-  },
-
-  sectionMainTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    textDecoration: "underline",
-    marginBottom: 20,
-  },
-
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: "bold",
-    marginTop: 12,
-    marginBottom: 4,
-  },
-
-  paragraph: {
-    fontSize: 10,
-    textAlign: "justify",
-    lineHeight: 1.5,
-    marginBottom: 8,
-  },
-
-  mapImage: {
-    marginTop: 8,
-    width: "80%",
-    height: 200,
-    alignSelf: "center",
-    objectFit: "contain",
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
-
-  linkText: {
-    fontSize: 10,
-    color: "blue",
-    textDecoration: "underline",
-  },
-
-  companyHeader: {
-    alignItems: "center",
-    marginBottom: 10,
-  },
-
-  smallLogo: {
-    width: 60,
-    height: 60,
-    objectFit: "contain",
-    marginBottom: 8,
-  },
-
-  companyNameText: {
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-
-  ssmText: {
-    fontSize: 10,
-    marginBottom: 10,
-  },
-
-  /* PRODUCT LIST */
+  // ================= PRODUCT LIST =================
   productTableHeader: {
     flexDirection: "row",
     borderWidth: 1,
     borderColor: "#000",
     backgroundColor: "#e6e6e6",
   },
-
   productHeaderCell: {
     padding: 6,
     fontSize: 10,
@@ -381,13 +144,11 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: "#000",
   },
-
   productRow: {
     flexDirection: "row",
     borderWidth: 1,
     borderColor: "#000",
   },
-
   productCell: {
     padding: 6,
     fontSize: 10,
@@ -395,151 +156,78 @@ const styles = StyleSheet.create({
     borderColor: "#000",
   },
 
-  colNoProduct: {
-    width: "10%",
-    textAlign: "center",
-  },
+  // ================= PRODUCT LIST COLUMN WIDTHS =================
+  colNoProduct: { width: "10%", textAlign: "center", borderRightWidth: 1, borderColor: "#000" },
+  colProductName: { width: "30%" },
+  colIngredients: { width: "60%", borderRightWidth: 0 },
 
-  colProduct: {
-    width: "30%",
-  },
-
-  colIngredients: {
-    width: "60%",
-    borderRightWidth: 0,
-  },
-
-  /* RAW MATERIAL MASTER */
+  // ================= RAW MATERIAL MASTER =================
   table: {
-    display: "table",
-    width: "100%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#000",
-    marginTop: 10,
-  },
+  display: "table",
+  width: "100%",
+  borderStyle: "solid",
+  borderWidth: 1,
+  borderColor: "#000",
+  marginTop: 10,
+},
 
-  tableRowHeader: {
-    flexDirection: "row",
-    backgroundColor: "#e6e6e6",
-    borderBottom: "1px solid #000",
-  },
+tableRowHeader: {
+  flexDirection: "row",
+  backgroundColor: "#e6e6e6",
+  borderBottom: "1px solid #000",
+},
 
-  tableRow: {
-    flexDirection: "row",
-    borderBottom: "1px solid #000",
-  },
+tableRow: {
+  flexDirection: "row",
+  borderBottom: "1px solid #000",
+},
 
-  tableHeaderCell: {
-    flex: 1,
-    padding: 4,
-    fontSize: 8,
-    fontWeight: "bold",
-    borderRight: "1px solid #000",
-  },
+tableHeaderCell: {
+  padding: 4,
+  fontSize: 8,
+  fontWeight: "bold",
+  borderRight: "1px solid #000",
+  textAlign: "left",
+  flexShrink: 0,     // prevent shrinking
+  flexWrap: "wrap",  // allow text to wrap to next line
+},
 
-  tableCellRaw: {
-    flex: 1,
-    padding: 4,
-    fontSize: 8,
-    borderRight: "1px solid #000",
-  },
+tableCell: {
+  padding: 4,
+  fontSize: 8,
+  borderRight: "1px solid #000",
+  textAlign: "left",
+  flexShrink: 0,     // prevent shrinking
+  flexWrap: "wrap",  // allow text to wrap to next line
+},
 
-  sopTitle: {
-    fontSize: 11,
-    fontWeight: "bold",
-    marginTop: 6,
-  },
+// Adjusted column widths
+colMaterialName: { width: "20%" },
+colScientificName: { width: "25%" },
+colSource: { width: "15%" },
+colManufacturer: { width: "15%" },
+colDeclaration: { width: "6%", textAlign: "center" },
+colHalalBody: { width: "10%" },
+colExpiry: { width: "9%", textAlign: "center" },
+  sopTitle: { fontSize: 11, fontWeight: "bold", marginTop: 6 },
+  sopInput: { fontSize: 10, marginBottom: 4 },
 
-  sopInput: {
-    fontSize: 10,
-    marginBottom: 4,
-  },
+  // ================= RAW MATERIAL SUMMARY =================
+  rawSummaryTableHeader: { flexDirection: "row", borderWidth: 1, borderColor: "#000", backgroundColor: "#e6e6e6" },
+  rawSummaryHeaderCell: { padding: 6, fontSize: 10, fontFamily: "Helvetica-Bold", borderRightWidth: 1, borderColor: "#000" },
+  rawSummaryRow: { flexDirection: "row", borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: "#000" },
+  rawSummaryCell: { padding: 6, fontSize: 10, borderRightWidth: 1, borderColor: "#000" },
 
-  /* RAW MATERIAL SUMMARY */
-  rawSummaryTableHeader: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#000",
-    backgroundColor: "#e6e6e6",
-  },
+  colMaterial: { width: "30%" },
+  colSupplier: { width: "25%" },
+  colCert: { width: "18%" },
+  colExpiry: { width: "19%" },
 
-  rawSummaryHeaderCell: {
-    padding: 6,
-    fontSize: 10,
-    fontFamily: "Helvetica-Bold",
-    borderRightWidth: 1,
-    borderColor: "#000",
-  },
+  // ================= IMAGES =================
+  flowchartImage: { marginTop: 20, width: "80%", height: 300, alignSelf: "center", objectFit: "contain", borderWidth: 1, borderColor: "#ccc" },
+  traceImage: { width: "100%", height: 650, objectFit: "contain", marginTop: 10 },
 
-  rawSummaryRow: {
-    flexDirection: "row",
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#000",
-  },
-
-  rawSummaryCell: {
-    padding: 6,
-    fontSize: 10,
-    borderRightWidth: 1,
-    borderColor: "#000",
-  },
-
-  colNoRaw: {
-    width: "8%",
-    textAlign: "center",
-  },
-
-  colMaterial: {
-    width: "30%",
-  },
-
-  colSupplier: {
-    width: "25%",
-  },
-
-  colCert: {
-    width: "18%",
-  },
-
-  colExpiry: {
-    width: "19%",
-  },
-
-  /* PROCESS FLOW */
-  flowchartImage: {
-    marginTop: 20,
-    width: "80%",
-    height: 300,
-    alignSelf: "center",
-    objectFit: "contain",
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
-
-  /* TRACEABILITY */
-  traceImage: {
-    width: "100%",
-    height: 650,
-    objectFit: "contain",
-    marginTop: 10,
-  },
-
-  colNoTrace: {
-    width: "8%",
-    textAlign: "center",
-    borderRightWidth: 1,
-    borderColor: "#000",
-  },
-
-  referenceTitle: {
-    fontSize: 14,
-    fontFamily: "Helvetica-Bold",
-    textAlign: "center",
-    marginBottom: 10,
-  },
+  referenceTitle: { fontSize: 14, fontFamily: "Helvetica-Bold", textAlign: "center", marginBottom: 10 },
 
 });
 
@@ -1015,6 +703,7 @@ const totalStaff =
 
 
 {/* RAW MATERIAL MASTER TABLE (LANDSCAPE) */}
+{/* RAW MATERIAL MASTER TABLE (LANDSCAPE) */}
 <Page size="A4" orientation="landscape" style={styles.page}>
   {renderHeader(12, rawMaterialMasterHeader)}
   <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
@@ -1022,38 +711,26 @@ const totalStaff =
   <View style={styles.table}>
     {/* HEADER */}
     <View style={styles.tableRowHeader}>
-      <Text style={styles.tableHeaderCell}>Material Name</Text>
-      <Text style={styles.tableHeaderCell}>Scientific / Brand Name</Text>
-      <Text style={styles.tableHeaderCell}>Raw Material Source</Text>
-      <Text style={styles.tableHeaderCell}>Manufacturer</Text>
-      <Text style={styles.tableHeaderCell}>Material Declaration</Text>
-      <Text style={styles.tableHeaderCell}>Halal Cert Body</Text>
-      <Text style={styles.tableHeaderCell}>Expiry Date</Text>
+      <Text style={[styles.tableHeaderCell, styles.colMaterialName]}>Material Name</Text>
+      <Text style={[styles.tableHeaderCell, styles.colScientificName]}>Scientific / Brand Name</Text>
+      <Text style={[styles.tableHeaderCell, styles.colSource]}>Raw Material Source</Text>
+      <Text style={[styles.tableHeaderCell, styles.colManufacturer]}>Manufacturer</Text>
+      <Text style={[styles.tableHeaderCell, styles.colDeclaration]}>Material Declaration</Text>
+      <Text style={[styles.tableHeaderCell, styles.colHalalBody]}>Halal Cert Body</Text>
+      <Text style={[styles.tableHeaderCell, styles.colExpiry]}>Expiry Date</Text>
     </View>
 
     {/* DATA */}
     {rawMaterialMaster?.length > 0 ? (
       rawMaterialMaster.map((item, idx) => (
         <View key={item?.id || idx} style={styles.tableRow}>
-
-          <Text style={styles.tableCell}>{item?.raw_material_name || "N/A"}</Text>
-
-          <Text style={styles.tableCell}>{item?.scientific_trade_name || "N/A"}</Text>
-
-          <Text style={styles.tableCell}>{item?.source_of_raw_material || "N/A"}</Text>
-
-          <Text style={styles.tableCell}>{item?.manufacturer_name_address || "N/A"}</Text>
-
-          <Text style={styles.tableCell}>
-            {item?.material_declaration_authorities ? "Yes" : "No"}
-          </Text>
-
-          <Text style={styles.tableCell}>{item?.halal_cert_body || "N/A"}</Text>
-
-          <Text style={styles.tableCell}>
-            {item?.halal_cert_expiry || "N/A"}
-          </Text>
-
+          <Text style={[styles.tableCell, styles.colMaterialName]}>{item?.raw_material_name || "N/A"}</Text>
+          <Text style={[styles.tableCell, styles.colScientificName]}>{item?.scientific_trade_name || "N/A"}</Text>
+          <Text style={[styles.tableCell, styles.colSource]}>{item?.source_of_raw_material || "N/A"}</Text>
+          <Text style={[styles.tableCell, styles.colManufacturer]}>{item?.manufacturer_name_address || "N/A"}</Text>
+          <Text style={[styles.tableCell, styles.colDeclaration]}>{item?.material_declaration_authorities ? "Yes" : "No"}</Text>
+          <Text style={[styles.tableCell, styles.colHalalBody]}>{item?.halal_cert_body || "N/A"}</Text>
+          <Text style={[styles.tableCell, styles.colExpiry]}>{item?.halal_cert_expiry || "N/A"}</Text>
         </View>
       ))
     ) : (
