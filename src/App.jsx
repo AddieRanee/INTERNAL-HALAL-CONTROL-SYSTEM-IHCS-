@@ -141,23 +141,34 @@ export default function App() {
   /* 🧠 Session + role (WITH LISTENER) */
 useEffect(() => {
   const fetchUserAndRole = async (session) => {
+  try {
     const currentUser = session?.user ?? null;
     setUser(currentUser);
 
     if (currentUser) {
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", currentUser.id)
-        .single();
+        .maybeSingle(); // 👈 IMPORTANT
 
-      setRole(profile?.role?.trim().toLowerCase() ?? null);
+      if (error) {
+        console.error("Role fetch error:", error);
+        setRole(null);
+      } else {
+        setRole(profile?.role?.trim().toLowerCase() ?? null);
+      }
     } else {
       setRole(null);
     }
-
-    setLoading(false);
-  };
+  } catch (err) {
+    console.error("Auth bootstrap error:", err);
+    setUser(null);
+    setRole(null);
+  } finally {
+    setLoading(false); // 👈 THIS is what stops infinite loading
+  }
+};
 
   // Initial load (refresh-safe)
   supabase.auth.getSession().then(({ data }) => {
