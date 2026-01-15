@@ -138,53 +138,65 @@ export default function App() {
     ((role === "client" && !hideSidebarOn.includes(location.pathname)) ||
       companyPages.includes(location.pathname));
 
-  /* 🧠 Session + role (WITH LISTENER) */
+  /* 🧠 Session + role (STABLE VERSION) */
 useEffect(() => {
+  let mounted = true;
+
   const fetchUserAndRole = async (session) => {
-  try {
     const currentUser = session?.user ?? null;
+
+    if (!mounted) return;
+
     setUser(currentUser);
 
-    if (currentUser) {
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", currentUser.id)
-        .maybeSingle(); // 👈 IMPORTANT
-
-      if (error) {
-        console.error("Role fetch error:", error);
-        setRole(null);
-      } else {
-        setRole(profile?.role?.trim().toLowerCase() ?? null);
-      }
-    } else {
+    if (!currentUser) {
       setRole(null);
+      return;
     }
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+    if (!mounted) return;
+
+    if (error) {
+      console.error("Role fetch error:", error);
+      setRole(null);
+    } else {
+      setRole(profile?.role?.trim().toLowerCase() ?? null);
+    }
+  };
+
+  // 1️⃣ Initial load
+  (async () => {
+  try {
+    const { data } = await supabase.auth.getSession();
+    await fetchUserAndRole(data.session);
   } catch (err) {
-    console.error("Auth bootstrap error:", err);
+    console.error("getSession failed:", err);
     setUser(null);
     setRole(null);
   } finally {
-    setLoading(false); // 👈 THIS is what stops infinite loading
+    if (mounted) setLoading(false);
   }
-};
+})();
 
-  // Initial load (refresh-safe)
-  supabase.auth.getSession().then(({ data }) => {
-    fetchUserAndRole(data.session);
-  });
-
-  // Auth change listener (login / logout)
+  // 2️⃣ Auth listener (NO loading control here)
   const { data: listener } = supabase.auth.onAuthStateChange(
-    async (_event, session) => {
-      setLoading(true);
-      await fetchUserAndRole(session);
+    (_event, session) => {
+      fetchUserAndRole(session);
     }
   );
 
-  return () => listener.subscription.unsubscribe();
+  return () => {
+    mounted = false;
+    listener.subscription.unsubscribe();
+  };
 }, []);
+
 
   if (loading) {
     return (
