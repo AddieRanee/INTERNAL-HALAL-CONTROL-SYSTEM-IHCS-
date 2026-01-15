@@ -21,18 +21,21 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
     paddingHorizontal: 50,
   },
+
   headerTable: {
     borderWidth: 1.2,
     borderColor: "#000",
     width: "100%",
     marginBottom: 25,
   },
+
   headerRow: {
     flexDirection: "row",
     borderBottomWidth: 1.2,
     borderColor: "#000",
     alignItems: "stretch",
   },
+
   logoCell: {
     width: "22%",
     borderRightWidth: 1.2,
@@ -41,11 +44,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 6,
   },
+
   logo: {
     width: 55,
     height: 55,
     objectFit: "contain",
   },
+
   companyNameCell: {
     width: "35%",
     borderRightWidth: 1.2,
@@ -55,10 +60,12 @@ const styles = StyleSheet.create({
     padding: 4,
     flexWrap: "wrap",
   },
+
   infoRightCell: {
     width: "43%",
     flexDirection: "column",
   },
+
   infoRow: {
     flexDirection: "row",
     borderBottomWidth: 1.2,
@@ -66,6 +73,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     height: 22,
   },
+
   infoLabel: {
     width: "50%",
     borderRightWidth: 1.2,
@@ -76,6 +84,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     textAlign: "left",
   },
+
   infoValue: {
     width: "50%",
     fontSize: 9,
@@ -83,6 +92,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     textAlign: "left",
   },
+
   bottomRow: {
     flexDirection: "row",
     borderTopWidth: 1.2,
@@ -90,6 +100,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     minHeight: 25,
   },
+
   bottomLeft: {
     width: "57%",
     borderRightWidth: 1.2,
@@ -98,6 +109,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
   },
+
   bottomMiddle: {
     width: "21.5%",
     borderRightWidth: 1.2,
@@ -106,25 +118,30 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 8,
   },
+
   bottomRight: {
     width: "21.5%",
     justifyContent: "center",
     paddingVertical: 5,
     paddingHorizontal: 8,
   },
+
   pageNoText: {
     fontSize: 9,
     textAlign: "left",
   },
+
   labelText: {
     fontSize: 9,
     fontWeight: "bold",
     flexWrap: "wrap",
   },
+
   normalText: {
     fontSize: 9,
     flexWrap: "wrap",
   },
+
   title: {
     textAlign: "center",
     fontSize: 20,
@@ -132,6 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     letterSpacing: 0.6,
   },
+
   logoCover: {
     alignSelf: "center",
     marginVertical: 40,
@@ -139,6 +157,7 @@ const styles = StyleSheet.create({
     height: 160,
     objectFit: "contain",
   },
+
   companyInfo: {
     textAlign: "center",
     fontSize: 13,
@@ -147,7 +166,7 @@ const styles = StyleSheet.create({
     marginBottom: 100,
   },
 
-  // cover page
+  /* COVER PAGE */
   tableWrapper: {
     width: "95%",
     alignSelf: "center",
@@ -156,11 +175,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
+
   tableCol: {
     flex: 1,
     borderLeftWidth: 1.5,
     borderColor: "#000",
   },
+
   tableHeader: {
     borderBottomWidth: 1.5,
     borderColor: "#000",
@@ -170,14 +191,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     backgroundColor: "#f4f4f4",
   },
-  tableCell: {
+
+  tableCellCover: {
     fontSize: 12,
     paddingVertical: 10,
     paddingHorizontal: 20,
     textAlign: "left",
   },
 
-  // cover page additions
   coverTable: {
     width: "95%",
     alignSelf: "center",
@@ -186,6 +207,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     minHeight: 170,
   },
+
   coverCol: {
     flex: 1,
     paddingVertical: 14,
@@ -193,6 +215,7 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     borderRightWidth: 1.5,
   },
+
   coverHeader: {
     fontSize: 13,
     fontWeight: "bold",
@@ -201,80 +224,80 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     borderColor: "#000",
   },
+
   coverCell: {
     fontSize: 12,
     marginTop: 10,
   },
 
-  // TOC
+  /* TOC */
   tocMainTitle: {
-  fontSize: 13,
-  fontWeight: "bold",
-  textAlign: "left",
-  marginTop: 40,
-  marginBottom: 15,
-},
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "left",
+    marginTop: 40,
+    marginBottom: 15,
+  },
 
-tocTable: {
-  width: "100%",
-},
+  tocTable: {
+    width: "100%",
+  },
 
-tocHeaderRow: {
-  flexDirection: "row",
-  borderTopWidth: 1.5,
-  borderBottomWidth: 1.5,
-  borderColor: "#000",
-  paddingVertical: 8,
-},
+  tocHeaderRow: {
+    flexDirection: "row",
+    borderTopWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: "#000",
+    paddingVertical: 8,
+  },
 
-tocHeaderNo: {
-  width: "10%",
-  fontSize: 11,
-  fontWeight: "bold",
-  textAlign: "center",
-},
+  tocHeaderNo: {
+    width: "10%",
+    fontSize: 11,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 
-tocHeaderTitle: {
-  width: "70%",
-  fontSize: 11,
-  fontWeight: "bold",
-  textAlign: "left",
-  paddingLeft: 10,
-},
+  tocHeaderTitle: {
+    width: "70%",
+    fontSize: 11,
+    fontWeight: "bold",
+    textAlign: "left",
+    paddingLeft: 10,
+  },
 
-tocHeaderPage: {
-  width: "20%",
-  fontSize: 11,
-  fontWeight: "bold",
-  textAlign: "right",
-},
+  tocHeaderPage: {
+    width: "20%",
+    fontSize: 11,
+    fontWeight: "bold",
+    textAlign: "right",
+  },
 
-tocRow: {
-  flexDirection: "row",
-  paddingVertical: 8,
-  borderBottomWidth: 0.5,
-  borderColor: "#ccc",
-},
+  tocRow: {
+    flexDirection: "row",
+    paddingVertical: 8,
+    borderBottomWidth: 0.5,
+    borderColor: "#ccc",
+  },
 
-tocNo: {
-  width: "10%",
-  fontSize: 10,
-  textAlign: "center",
-},
+  tocNo: {
+    width: "10%",
+    fontSize: 10,
+    textAlign: "center",
+  },
 
-tocTitleText: {
-  width: "70%",
-  fontSize: 10,
-  textAlign: "left",
-  paddingLeft: 10,
-},
+  tocTitleText: {
+    width: "70%",
+    fontSize: 10,
+    textAlign: "left",
+    paddingLeft: 10,
+  },
 
-tocPageText: {
-  width: "20%",
-  fontSize: 10,
-  textAlign: "right",
-},
-
+  tocPageText: {
+    width: "20%",
+    fontSize: 10,
+    textAlign: "right",
+  },
 
   centeredTitle: {
     fontSize: 14,
@@ -282,6 +305,7 @@ tocPageText: {
     textAlign: "center",
     marginTop: 300,
   },
+
   sectionMainTitle: {
     fontSize: 16,
     fontWeight: "bold",
@@ -289,18 +313,21 @@ tocPageText: {
     textDecoration: "underline",
     marginBottom: 20,
   },
+
   sectionTitle: {
     fontSize: 12,
     fontWeight: "bold",
     marginTop: 12,
     marginBottom: 4,
   },
+
   paragraph: {
     fontSize: 10,
     textAlign: "justify",
     lineHeight: 1.5,
     marginBottom: 8,
   },
+
   mapImage: {
     marginTop: 8,
     width: "80%",
@@ -310,76 +337,79 @@ tocPageText: {
     borderWidth: 1,
     borderColor: "#ccc",
   },
+
   linkText: {
     fontSize: 10,
     color: "blue",
     textDecoration: "underline",
   },
+
   companyHeader: {
     alignItems: "center",
     marginBottom: 10,
   },
+
   smallLogo: {
     width: 60,
     height: 60,
     objectFit: "contain",
     marginBottom: 8,
   },
+
   companyNameText: {
     fontSize: 12,
     fontWeight: "bold",
   },
+
   ssmText: {
     fontSize: 10,
     marginBottom: 10,
   },
 
-// ========================= PRODUCT LIST =========================
-productTableHeader: {
-  flexDirection: "row",
-  borderWidth: 1,
-  borderColor: "#000",
-  backgroundColor: "#e6e6e6",
-},
+  /* PRODUCT LIST */
+  productTableHeader: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#000",
+    backgroundColor: "#e6e6e6",
+  },
 
-productHeaderCell: {
-  padding: 6,
-  fontSize: 10,
-  fontFamily: "Helvetica-Bold",
-  borderRightWidth: 1,
-  borderColor: "#000",
-},
+  productHeaderCell: {
+    padding: 6,
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    borderRightWidth: 1,
+    borderColor: "#000",
+  },
 
-productRow: {
-  flexDirection: "row",
-  borderWidth: 1,
-  borderColor: "#000",
-},
+  productRow: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#000",
+  },
 
-productCell: {
-  padding: 6,
-  fontSize: 10,
-  borderRightWidth: 1,
-  borderColor: "#000",
-},
+  productCell: {
+    padding: 6,
+    fontSize: 10,
+    borderRightWidth: 1,
+    borderColor: "#000",
+  },
 
-// FIXED CLEAN COLUMN WIDTHS
-colNo: {
-  width: "10%",
-  textAlign: "center",
-},
+  colNoProduct: {
+    width: "10%",
+    textAlign: "center",
+  },
 
-colProduct: {
-  width: "30%",
-},
+  colProduct: {
+    width: "30%",
+  },
 
-colIngredients: {
-  width: "60%",
-  borderRightWidth: 0, // prevents double border on last column
-},
+  colIngredients: {
+    width: "60%",
+    borderRightWidth: 0,
+  },
 
-
-  /* RAW MATERIAL MASTER (unchanged) */
+  /* RAW MATERIAL MASTER */
   table: {
     display: "table",
     width: "100%",
@@ -388,15 +418,18 @@ colIngredients: {
     borderColor: "#000",
     marginTop: 10,
   },
+
   tableRowHeader: {
     flexDirection: "row",
     backgroundColor: "#e6e6e6",
     borderBottom: "1px solid #000",
   },
+
   tableRow: {
     flexDirection: "row",
     borderBottom: "1px solid #000",
   },
+
   tableHeaderCell: {
     flex: 1,
     padding: 4,
@@ -404,7 +437,8 @@ colIngredients: {
     fontWeight: "bold",
     borderRight: "1px solid #000",
   },
-  tableCell: {
+
+  tableCellRaw: {
     flex: 1,
     padding: 4,
     fontSize: 8,
@@ -416,97 +450,96 @@ colIngredients: {
     fontWeight: "bold",
     marginTop: 6,
   },
+
   sopInput: {
     fontSize: 10,
     marginBottom: 4,
   },
 
-// RAW MATERIAL SUMMARY TABLE STYLES
-rawSummaryTableHeader: {
-  flexDirection: "row",
-  borderWidth: 1,
-  borderColor: "#000",
-  backgroundColor: "#e6e6e6",
-},
+  /* RAW MATERIAL SUMMARY */
+  rawSummaryTableHeader: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#000",
+    backgroundColor: "#e6e6e6",
+  },
 
-rawSummaryHeaderCell: {
-  padding: 6,
-  fontSize: 10,
-  fontFamily: "Helvetica-Bold",
-  borderRightWidth: 1,
-  borderColor: "#000",
-},
+  rawSummaryHeaderCell: {
+    padding: 6,
+    fontSize: 10,
+    fontFamily: "Helvetica-Bold",
+    borderRightWidth: 1,
+    borderColor: "#000",
+  },
 
-rawSummaryRow: {
-  flexDirection: "row",
-  borderLeftWidth: 1,
-  borderRightWidth: 1,
-  borderBottomWidth: 1,
-  borderColor: "#000",
-},
+  rawSummaryRow: {
+    flexDirection: "row",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: "#000",
+  },
 
-rawSummaryCell: {
-  padding: 6,
-  fontSize: 10,
-  borderRightWidth: 1,
-  borderColor: "#000",
-},
+  rawSummaryCell: {
+    padding: 6,
+    fontSize: 10,
+    borderRightWidth: 1,
+    borderColor: "#000",
+  },
 
-// COLUMN WIDTHS
-colNo: {
-  width: "8%",
-  textAlign: "center",
-},
+  colNoRaw: {
+    width: "8%",
+    textAlign: "center",
+  },
 
-colMaterial: {
-  width: "30%",
-},
+  colMaterial: {
+    width: "30%",
+  },
 
-colSupplier: {
-  width: "25%",
-},
+  colSupplier: {
+    width: "25%",
+  },
 
-colCert: {
-  width: "18%",
-},
+  colCert: {
+    width: "18%",
+  },
 
-colExpiry: {
-  width: "19%",
-},
+  colExpiry: {
+    width: "19%",
+  },
 
-// process flow chart 
+  /* PROCESS FLOW */
+  flowchartImage: {
+    marginTop: 20,
+    width: "80%",
+    height: 300,
+    alignSelf: "center",
+    objectFit: "contain",
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
 
-flowchartImage: {
-  marginTop: 20,
-  width: "80%",
-  height: 300,
-  alignSelf: "center",
-  objectFit: "contain",
-  borderWidth: 1,
-  borderColor: "#ccc",
-},
-// traceability 
-traceImage: {
-  width: "100%",
-  height: 650, // nice and tall
-  objectFit: "contain",
-  marginTop: 10,
-},
+  /* TRACEABILITY */
+  traceImage: {
+    width: "100%",
+    height: 650,
+    objectFit: "contain",
+    marginTop: 10,
+  },
 
-colNo: {
-  width: "8%",
-  textAlign: "center",
-  borderRightWidth: 1,
-  borderColor: "#000",
-},
+  colNoTrace: {
+    width: "8%",
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderColor: "#000",
+  },
 
-referenceTitle: {
-  fontSize: 14,     // smaller than sectionMainTitle
-  fontFamily: "Helvetica-Bold",
-  textAlign: "center",
-  marginBottom: 10,
-},
-
+  referenceTitle: {
+    fontSize: 14,
+    fontFamily: "Helvetica-Bold",
+    textAlign: "center",
+    marginBottom: 10,
+  },
 
 });
 
