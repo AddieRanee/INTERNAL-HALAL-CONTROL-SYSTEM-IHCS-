@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Base layout */
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  @apply bg-white text-gray-900;
+}
+
+/* ============================= */
+/* ✨ Smooth Animations (NO BLINK) */
+/* ============================= */
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Optional modal entrance (no blinking) */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-modal {
+  animation: modalFadeIn 0.25s ease-out;
+}
