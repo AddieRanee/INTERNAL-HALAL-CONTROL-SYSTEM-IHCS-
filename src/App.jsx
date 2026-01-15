@@ -139,36 +139,41 @@ export default function App() {
       companyPages.includes(location.pathname));
 
   /* 🧠 Session + role (WITH LISTENER) */
-  useEffect(() => {
-    const fetchSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      const currentUser = data.session?.user ?? null;
-      setUser(currentUser);
+useEffect(() => {
+  const fetchUserAndRole = async (session) => {
+    const currentUser = session?.user ?? null;
+    setUser(currentUser);
 
-      if (currentUser) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", currentUser.id)
-          .single();
-        setRole(profile?.role?.trim().toLowerCase() ?? null);
-      } else {
-        setRole(null);
-      }
+    if (currentUser) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", currentUser.id)
+        .single();
 
-      setLoading(false);
-    };
+      setRole(profile?.role?.trim().toLowerCase() ?? null);
+    } else {
+      setRole(null);
+    }
 
-    fetchSession();
+    setLoading(false);
+  };
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
+  // Initial load (refresh-safe)
+  supabase.auth.getSession().then(({ data }) => {
+    fetchUserAndRole(data.session);
+  });
 
-    return () => listener.subscription.unsubscribe();
-  }, []);
+  // Auth change listener (login / logout)
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    async (_event, session) => {
+      setLoading(true);
+      await fetchUserAndRole(session);
+    }
+  );
+
+  return () => listener.subscription.unsubscribe();
+}, []);
 
   if (loading) {
     return (
