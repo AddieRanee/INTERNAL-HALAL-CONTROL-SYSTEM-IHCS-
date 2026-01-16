@@ -49,53 +49,68 @@ export default function RawMaterialMasterList() {
   }, [userId, navigate]);
 
   // ---------------- FETCH EXISTING DATA ----------------
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!companyInfoId) return;
+useEffect(() => {
+  const fetchData = async () => {
+    if (!companyInfoId) return;
 
-      const { data, error } = await supabase
-        .from("raw_material_master")
-        .select("*")
-        .eq("company_info_id", companyInfoId);
+    // 1️⃣ FETCH MATERIALS (LIST)
+    const { data: materialsData, error: materialsError } = await supabase
+      .from("raw_material_master")
+      .select("*")
+      .eq("company_info_id", companyInfoId);
 
-      if (error) {
-        console.error("❌ Error fetching raw materials:", error.message);
-        return;
-      }
+    if (materialsError) {
+      console.error("❌ Error fetching raw materials:", materialsError.message);
+      return;
+    }
 
-      if (data?.length) {
-        setMaterials(data);
+    if (materialsData?.length) {
+      setMaterials(materialsData);
+    } else {
+      setMaterials([
+        {
+          raw_material_name: "",
+          scientific_trade_name: "",
+          source_of_raw_material: "",
+          manufacturer_name_address: "",
+          material_declaration_authorities: false,
+          halal_cert_body: "CICOT",
+          halal_cert_expiry: "",
+        },
+      ]);
+    }
 
-        const first = data[0];
-        setSop({
-          objective: first.objective || "",
-          scope: first.scope || "",
-          responsibilities: first.responsibilities || "",
-          frequency: first.frequency || "",
-          purchase: first.purchase || "",
-          receipt: first.receipt || "",
-          storage: first.storage || "",
-          record: first.record || "",
-          implementation_date: first.implementation_date || "",
-          reference_no: first.reference_no || "",
-          review_no: first.review_no || "",
-        });
-      } else {
-        setMaterials([
-          {
-            raw_material_name: "",
-            scientific_trade_name: "",
-            source_of_raw_material: "",
-            manufacturer_name_address: "",
-            material_declaration_authorities: false,
-            halal_cert_body: "CICOT",
-            halal_cert_expiry: "",
-          },
-        ]);
-      }
-    };
-    fetchData();
-  }, [companyInfoId]);
+    // 2️⃣ FETCH SOP (SINGLE DOCUMENT)
+    const { data: sopData, error: sopError } = await supabase
+      .from("raw_material_sop")
+      .select("*")
+      .eq("company_info_id", companyInfoId)
+      .single();
+
+    if (sopError && sopError.code !== "PGRST116") {
+      console.error("❌ Error fetching SOP:", sopError.message);
+    }
+
+    if (sopData) {
+      setSop({
+        objective: sopData.objective || "",
+        scope: sopData.scope || "",
+        responsibilities: sopData.responsibilities || "",
+        frequency: sopData.frequency || "",
+        purchase: sopData.purchase || "",
+        receipt: sopData.receipt || "",
+        storage: sopData.storage || "",
+        record: sopData.record || "",
+        implementation_date: sopData.implementation_date || "",
+        reference_no: sopData.reference_no || "",
+        review_no: sopData.review_no || "",
+      });
+    }
+  };
+
+  fetchData();
+}, [companyInfoId]);
+
 
   // ---------------- HANDLERS ----------------
   const handleChange = (index, field, value) => {
@@ -146,60 +161,63 @@ export default function RawMaterialMasterList() {
     );
   };
 
-  const saveAll = async () => {
-    if (!companyInfoId)
-      return alert("❌ Missing Company Info ID. Save company info first.");
+const saveAll = async () => {
+  if (!companyInfoId)
+    return alert("❌ Missing Company Info ID. Save company info first.");
 
-    try {
-      for (const material of materials) {
-        const record = {
-          company_info_id: companyInfoId,
-          raw_material_name: material.raw_material_name || "",
-          scientific_trade_name: material.scientific_trade_name || "",
-          source_of_raw_material: material.source_of_raw_material || "",
-          manufacturer_name_address: material.manufacturer_name_address || "",
-          material_declaration_authorities:
-            material.material_declaration_authorities || false,
-          halal_cert_body: material.halal_cert_body || "",
-          halal_cert_expiry: material.halal_cert_expiry || null,
+  try {
 
-          // SOP Fields
-          objective: sop.objective || "",
-          scope: sop.scope || "",
-          responsibilities: sop.responsibilities || "",
-          frequency: sop.frequency || "",
-          purchase: sop.purchase || "",
-          receipt: sop.receipt || "",
-          storage: sop.storage || "",
-          record: sop.record || "",
-          implementation_date: sop.implementation_date || null,
-          reference_no: sop.reference_no || "",
-          review_no: sop.review_no || "",
-          updated_at: new Date().toISOString(),
-        };
+    // 1️⃣ save materials (loop)
+    for (const material of materials) {
+      const record = {
+        company_info_id: companyInfoId,
+        raw_material_name: material.raw_material_name || "",
+        scientific_trade_name: material.scientific_trade_name || "",
+        source_of_raw_material: material.source_of_raw_material || "",
+        manufacturer_name_address: material.manufacturer_name_address || "",
+        material_declaration_authorities:
+          material.material_declaration_authorities || false,
+        halal_cert_body: material.halal_cert_body || "",
+        halal_cert_expiry: material.halal_cert_expiry || null,
+      };
 
-        if (material.id) {
-          const { error } = await supabase
-            .from("raw_material_master")
-            .update(record)
-            .eq("id", material.id);
-          if (error)
-            console.error("❌ Error updating material:", error.message);
-        } else {
-          const { error } = await supabase
-            .from("raw_material_master")
-            .insert([record]);
-          if (error)
-            console.error("❌ Error inserting material:", error.message);
-        }
+      if (material.id) {
+        await supabase
+          .from("raw_material_master")
+          .update(record)
+          .eq("id", material.id);
+      } else {
+        await supabase
+          .from("raw_material_master")
+          .insert([record]);
       }
-
-      alert("✅ Raw materials & SOP saved successfully!");
-    } catch (err) {
-      console.error("❌ Unexpected error saving materials:", err);
-      alert("⚠️ Error saving materials. Check console for details.");
     }
-  };
+
+    // 2️⃣ SAVE SOP — MUST BE HERE (inside async)
+    await supabase.from("raw_material_sop").upsert({
+      company_info_id: companyInfoId,
+      objective: sop.objective || "",
+      scope: sop.scope || "",
+      responsibilities: sop.responsibilities || "",
+      frequency: sop.frequency || "",
+      purchase: sop.purchase || "",
+      receipt: sop.receipt || "",
+      storage: sop.storage || "",
+      record: sop.record || "",
+      implementation_date: sop.implementation_date || null,
+      reference_no: sop.reference_no || "",
+      review_no: sop.review_no || "",
+      updated_at: new Date().toISOString(),
+    });
+
+    alert("✅ Raw materials & SOP saved successfully!");
+
+  } catch (err) {
+    console.error("❌ Unexpected error saving materials:", err);
+  }
+};
+
+  
 
     // ---------------- BUILD DATA FOR NEXT PAGE ----------------
   const rawMaterialData = {
