@@ -13,221 +13,117 @@ const safe = (v) => (v ? v : "[-]");
 const pickOne = (arr) => (Array.isArray(arr) && arr.length > 0 ? arr[0] : null);
 
 const styles = StyleSheet.create({
-  page: {
-    flexDirection: "column",
-    backgroundColor: "#ffffff",
-    fontFamily: "Helvetica",
-    paddingTop: 60,
-    paddingBottom: 60,
-    paddingHorizontal: 50,
-  },
+  page: {flexDirection: "column",backgroundColor: "#ffffff",fontFamily: "Helvetica",paddingTop: 60,paddingBottom: 60,paddingHorizontal: 50,},
 
   // ================= HEADER / FOOTER =================
-  headerTable: {
-    borderWidth: 1.2,
-    borderColor: "#000",
-    width: "100%",
-    marginBottom: 25,
-  },
-  headerRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1.2,
-    borderColor: "#000",
-    alignItems: "stretch",
-  },
-  logoCell: {
-    width: "22%",
-    borderRightWidth: 1.2,
-    borderColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 6,
-  },
-  logo: {
-    width: 55,
-    height: 55,
-    objectFit: "contain",
-  },
-  companyNameCell: {
-    width: "35%",
-    borderRightWidth: 1.2,
-    borderColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 4,
-    flexWrap: "wrap",
-  },
-  infoRightCell: {
-    width: "43%",
-    flexDirection: "column",
-  },
-  infoRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1.2,
-    borderColor: "#000",
-    alignItems: "stretch",
-    height: 22,
-  },
-  infoLabel: {
-    width: "50%",
-    borderRightWidth: 1.2,
-    borderColor: "#000",
-    fontSize: 9,
-    fontWeight: "bold",
-    paddingVertical: 4,
-    paddingHorizontal: 5,
-    textAlign: "left",
-  },
-  infoValue: {
-    width: "50%",
-    fontSize: 9,
-    paddingVertical: 4,
-    paddingHorizontal: 5,
-    textAlign: "left",
-  },
-  bottomRow: {
-    flexDirection: "row",
-    borderTopWidth: 1.2,
-    borderColor: "#000",
-    alignItems: "stretch",
-    minHeight: 25,
-  },
-  bottomLeft: {
-    width: "57%",
-    borderRightWidth: 1.2,
-    borderColor: "#000",
-    justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-  },
-  bottomMiddle: {
-    width: "21.5%",
-    borderRightWidth: 1.2,
-    borderColor: "#000",
-    justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-  },
-  bottomRight: {
-    width: "21.5%",
-    justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-  },
-
+  headerTable: {borderWidth: 1.2,borderColor: "#000",width: "100%",marginBottom: 25,},
+  headerRow: {flexDirection: "row",borderBottomWidth: 1.2,borderColor: "#000",alignItems: "stretch",},
+  logoCell: {width: "22%",borderRightWidth: 1.2,borderColor: "#000",justifyContent: "center",alignItems: "center",padding: 6,},
+  logo: {width: 55,height: 55,objectFit: "contain",},
+  companyNameCell: {width: "35%",borderRightWidth: 1.2,borderColor: "#000",justifyContent: "center",alignItems: "center",padding: 4,flexWrap: "wrap",},
+  infoRightCell: {width: "43%",flexDirection: "column",},
+  infoRow: {flexDirection: "row",borderBottomWidth: 1.2,borderColor: "#000",alignItems: "stretch",height: 22,},
+  infoLabel: {width: "50%",borderRightWidth: 1.2,borderColor: "#000",fontSize: 9,fontWeight: "bold",paddingVertical: 4,paddingHorizontal: 5,textAlign: "left",},
+  infoValue: {width: "50%",fontSize: 9,paddingVertical: 4,paddingHorizontal: 5,textAlign: "left",},
+  bottomRow: {flexDirection: "row",borderTopWidth: 1.2,borderColor: "#000",alignItems: "stretch",minHeight: 25,},
+  bottomLeft: {width: "57%",borderRightWidth: 1.2,borderColor: "#000",justifyContent: "center",paddingVertical: 5,paddingHorizontal: 10,},
+  bottomMiddle: {width: "21.5%",borderRightWidth: 1.2,borderColor: "#000",justifyContent: "center",paddingVertical: 5,paddingHorizontal: 8,},
+  bottomRight: {width: "21.5%",justifyContent: "center",paddingVertical: 5,paddingHorizontal: 8,},
   pageNoText: { fontSize: 9, textAlign: "left" },
   labelText: { fontSize: 9, fontWeight: "bold", flexWrap: "wrap" },
-  normalText: { fontSize: 9, flexWrap: "wrap" },
+
+    // ================= Title Pages =================
   title: { textAlign: "center", fontSize: 20, fontWeight: "bold", marginBottom: 40, letterSpacing: 0.6 },
-
-  // ================= COVER PAGE =================
-  logoCover: { alignSelf: "center", marginVertical: 40, width: 220, height: 160, objectFit: "contain" },
-  companyInfo: { textAlign: "center", fontSize: 13, fontWeight: "bold", lineHeight: 1.8, marginBottom: 100 },
   centeredTitle: { fontSize: 14, fontWeight: "bold", textAlign: "center", marginTop: 300 },
+  sectionMainTitle: { fontSize: 16, fontWeight: "bold", textAlign: "center", textDecoration: "underline", marginBottom: 20 }, 
 
-  // ================= SECTION TITLES =================
-  sectionMainTitle: { fontSize: 16, fontWeight: "bold", textAlign: "center", textDecoration: "underline", marginBottom: 20 },
   sectionTitle: { fontSize: 12, fontWeight: "bold", marginTop: 12, marginBottom: 4 },
   paragraph: { fontSize: 10, textAlign: "justify", lineHeight: 1.5, marginBottom: 8 },
 
-  // ================= PRODUCT LIST =================
-  productTableHeader: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#000",
-    backgroundColor: "#e6e6e6",
-  },
-  productHeaderCell: {
-    padding: 6,
-    fontSize: 10,
-    fontFamily: "Helvetica-Bold",
-    borderRightWidth: 1,
-    borderColor: "#000",
-  },
-  productRow: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#000",
-  },
-  productCell: {
-    padding: 6,
-    fontSize: 10,
-    borderRightWidth: 1,
-    borderColor: "#000",
-  },
+  // ================= COVER PAGE =================
+  // top
+  logoCover: { alignSelf: "center", marginVertical: 40, width: 220, height: 160, objectFit: "contain" },
+  companyInfo: { textAlign: "center", fontSize: 13, fontWeight: "bold", lineHeight: 1.8, marginBottom: 100 },
+  textAlign: { textAlign: "center", fontSize: 12, color: "#999", marginBottom: 40 },
+  //table 
+  coverCol: { width: "100%", borderWidth: 1, borderColor: "#000", padding: 12 },
+  coverHeader: { fontSize: 12, fontWeight: "bold", marginTop: 14, marginBottom: 4, borderTopWidth: 1, borderTopColor: "#000", paddingTop: 6, textTransform: "uppercase" },
+  coverCell: { fontSize: 10, marginBottom: 3 },
 
-  // ================= PRODUCT LIST COLUMN WIDTHS =================
-  colNoProduct: { width: "10%", textAlign: "center", borderRightWidth: 1, borderColor: "#000" },
-  colProductName: { width: "30%" },
-  colIngredients: { width: "60%", borderRightWidth: 0 },
+  // ================= TOC =================
+  tocMainTitle: { fontSize: 14, fontWeight: "bold", textAlign: "center", marginBottom: 12 },
+  tocTable: { display: "table", width: "100%", borderWidth: 1, borderColor: "#000" },
+  tocHeaderRow: { flexDirection: "row", backgroundColor: "#e6e6e6", borderBottomWidth: 1, borderColor: "#000" },
+  tocHeaderNo: { width: "10%", fontSize: 8, fontWeight: "bold", padding: 4, textAlign: "center", borderRightWidth: 1, borderColor: "#000" },
+  tocHeaderTitle: { width: "70%", fontSize: 8, fontWeight: "bold", padding: 4, borderRightWidth: 1, borderColor: "#000" },
+  tocHeaderPage: { width: "20%", fontSize: 8, fontWeight: "bold", padding: 4, textAlign: "center" },
+  tocRow: { flexDirection: "row", borderBottomWidth: 1, borderColor: "#000" },
+  tocNo: { width: "10%", fontSize: 8, padding: 4, textAlign: "center", borderRightWidth: 1, borderColor: "#000" },
+  tocTitleText: { width: "70%", fontSize: 8, padding: 4, borderRightWidth: 1, borderColor: "#000" },
+  tocPageText: { width: "20%", fontSize: 8, padding: 4, textAlign: "center" },
 
-  // ================= RAW MATERIAL MASTER =================
-  table: {
-  display: "table",
-  width: "100%",
-  borderStyle: "solid",
-  borderWidth: 1,
-  borderColor: "#000",
-  marginTop: 10,
-},
+  // ================= Company Background =================
+  linkText: { fontSize: 8, color: "#0645AD", marginTop: 4, textDecoration: "underline" },
 
-tableRowHeader: {
-  flexDirection: "row",
-  backgroundColor: "#e6e6e6",
-  borderBottom: "1px solid #000",
-},
+  // ================= ORGANISATION CHART  =================
+  orgChartImage: { width: "100%", height: 260, marginTop: 10, borderWidth: 1, borderColor: "#000" },
 
-tableRow: {
-  flexDirection: "row",
-  borderBottom: "1px solid #000",
-},
+  // ================= halal policy =================
+  companyHeader: { alignItems: "center", marginBottom: 12 },
+  smallLogo: { width: 60, height: 60, marginBottom: 6 },
+  companyNameText: { fontSize: 12, fontWeight: "bold", textAlign: "center" },
+  ssmText: { fontSize: 9, textAlign: "center", marginTop: 2 },
+  signatureContainer: { marginTop: 40, width: "60%" },
 
-tableHeaderCell: {
-  padding: 4,
-  fontSize: 8,
-  fontWeight: "bold",
-  borderRight: "1px solid #000",
-  textAlign: "left",
-  flexShrink: 0,     // prevent shrinking
-  flexWrap: "wrap",  // allow text to wrap to next line
-},
+ // ================= PRODUCT LIST =================
 
-tableCell: {
-  padding: 4,
-  fontSize: 8,
-  borderRight: "1px solid #000",
-  textAlign: "left",
-  flexShrink: 0,     // prevent shrinking
-  flexWrap: "wrap",  // allow text to wrap to next line
-},
+productTableHeader: { flexDirection: "row", borderWidth: 1, borderColor: "#000", backgroundColor: "#e6e6e6" },
+productHeaderCell: { padding: 6, fontSize: 10, fontFamily: "Helvetica-Bold", borderRightWidth: 1, borderColor: "#000" },
+productRow: { flexDirection: "row", borderWidth: 1, borderColor: "#000" },
+productCell: { padding: 6, fontSize: 10, borderRightWidth: 1, borderColor: "#000" },
+// PRODUCT LIST COLUMN WIDTHS
+colNo: { width: "10%", textAlign: "center", borderRightWidth: 1, borderColor: "#000" },
+colProduct: { width: "30%", borderRightWidth: 1, borderColor: "#000" },
+colIngredients: { width: "60%", borderRightWidth: 0 },
+
+// ================= RAW MATERIAL MASTER TABLE =================
+rmMasterTable:{display:"table",width:"100%",borderStyle:"solid",borderWidth:1,borderColor:"#000",marginTop:10},
+rmMasterHeaderRow:{flexDirection:"row",backgroundColor:"#e6e6e6",borderBottom:"1px solid #000"},
+rmMasterRow:{flexDirection:"row",borderBottom:"1px solid #000"},
+rmMasterHeaderCell:{padding:4,fontSize:8,fontFamily:"Helvetica-Bold",borderRight:"1px solid #000",textAlign:"left",flexShrink:0,flexWrap:"wrap"},
+rmMasterCell:{padding:4,fontSize:8,borderRight:"1px solid #000",textAlign:"left",flexShrink:0,flexWrap:"wrap"},
 
 // Adjusted column widths
-colMaterialName: { width: "20%" },
-colScientificName: { width: "25%" },
-colSource: { width: "15%" },
-colManufacturer: { width: "15%" },
-colDeclaration: { width: "6%", textAlign: "center" },
-colHalalBody: { width: "10%" },
-colExpiry: { width: "9%", textAlign: "center" },
+  colMaterialName: { width: "20%" },
+  colScientificName: { width: "25%" },
+  colSource: { width: "15%" },
+  colManufacturer: { width: "15%" },
+  colDeclaration: { width: "6%", textAlign: "center" },
+  colHalalBody: { width: "10%" },
+  colExpiry: { width: "9%", textAlign: "center" },
   sopTitle: { fontSize: 11, fontWeight: "bold", marginTop: 6 },
   sopInput: { fontSize: 10, marginBottom: 4 },
 
   // ================= RAW MATERIAL SUMMARY =================
-  rawSummaryTableHeader: { flexDirection: "row", borderWidth: 1, borderColor: "#000", backgroundColor: "#e6e6e6" },
-  rawSummaryHeaderCell: { padding: 6, fontSize: 10, fontFamily: "Helvetica-Bold", borderRightWidth: 1, borderColor: "#000" },
-  rawSummaryRow: { flexDirection: "row", borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: "#000" },
-  rawSummaryCell: { padding: 6, fontSize: 10, borderRightWidth: 1, borderColor: "#000" },
+  rawSummaryTable:{display:"table",width:"100%",borderWidth:1,borderColor:"#000",marginTop:10},
+  rawSummaryTableHeader:{flexDirection:"row",backgroundColor:"#e6e6e6",borderBottom:"1px solid #000"},
+  rawSummaryRow:{flexDirection:"row",borderBottom:"1px solid #000"},
+  rawSummaryHeaderCell:{padding:4,fontSize:8,fontFamily:"Helvetica-Bold",borderRight:"1px solid #000",textAlign:"left"},
+  rawSummaryCell:{padding:3,fontSize:7,borderRight:"1px solid #000",textAlign:"left"},
 
-  colMaterial: { width: "30%" },
-  colSupplier: { width: "25%" },
-  colCert: { width: "18%" },
-  colExpiry: { width: "19%" },
+  // ================= RAW MATERIAL SUMMARY COLUMNS =================
+  rmSummaryColNo:{width:"8%",textAlign:"center"},
+  rmSummaryColMaterial:{width:"30%"},
+  rmSummaryColSupplier:{width:"25%"},
+  rmSummaryColCert:{width:"18%"},
+  rmSummaryColExpiry:{width:"19%",borderRight:0},
+
+// ================= TRACEABILITY =================
+  referenceTitle:{fontSize:14,fontFamily:"Helvetica-Bold",textAlign:"center",marginVertical:12,textTransform:"uppercase"},
+  traceImageLarge:{width:"100%",height:380,marginTop:10,borderWidth:1,borderColor:"#000",objectFit:"contain"},
 
   // ================= IMAGES =================
-  flowchartImage: { marginTop: 20, width: "80%", height: 300, alignSelf: "center", objectFit: "contain", borderWidth: 1, borderColor: "#ccc" },
-  traceImage: { width: "100%", height: 650, objectFit: "contain", marginTop: 10 },
-
-  referenceTitle: { fontSize: 14, fontFamily: "Helvetica-Bold", textAlign: "center", marginBottom: 10 },
+  mapImage: { width: "100%", height: 200, marginTop: 6, borderWidth: 1, borderColor: "#000" },
 
 });
 
@@ -326,18 +222,10 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
     );
   };
 
-  // Calculate total staff based on table fields
-const totalStaff =
-  (organisationChartHeader.directors || 0) +
-  (organisationChartHeader.managers || 0) +
-  (organisationChartHeader.supervisors || 0) +
-  (organisationChartHeader.employees || 0);
-
-
   // ======= RETURN DOCUMENT =======
   return (
     <Document>
-
+  // ======= cover page  =======
 {/* Cover */}
 <Page size="A4" style={styles.page}>
   <Text style={styles.title}>INTERNAL HALAL CONTROL SYSTEM (IHCS)</Text>
@@ -345,16 +233,7 @@ const totalStaff =
   {info.company_logo_url ? (
     <Image style={styles.logoCover} src={info.company_logo_url} />
   ) : (
-    <Text
-      style={{
-        textAlign: "center",
-        fontSize: 12,
-        color: "#999",
-        marginBottom: 40,
-      }}
-    >
-      COMPANY LOGO
-    </Text>
+    <Text style={styles.textAlign}>COMPANY LOGO</Text>
   )}
 
   <View style={styles.companyInfo}>
@@ -364,7 +243,6 @@ const totalStaff =
   </View>
 
   {/* Table */}
-  <View style={styles.coverTable}>
     {/* Prepared By */}
     <View style={styles.coverCol}>
       <Text style={styles.coverHeader}>Prepared By</Text>
@@ -373,10 +251,7 @@ const totalStaff =
       <Text style={styles.coverCell}>
         Date: {info.prepared_date ? new Date(info.prepared_date).toLocaleDateString() : ""}
       </Text>
-    </View>
-
     {/* Approved By */}
-    <View style={[styles.coverCol, { borderRightWidth: 0 }]}>
       <Text style={styles.coverHeader}>Approved By</Text>
       <Text style={styles.coverCell}>Name: {info.approved_by_name || ""}</Text>
       <Text style={styles.coverCell}>Position: {info.approved_by_position || ""}</Text>
@@ -384,7 +259,6 @@ const totalStaff =
         Date: {info.approved_date ? new Date(info.approved_date).toLocaleDateString() : ""}
       </Text>
     </View>
-  </View>
 </Page>
 
 
@@ -437,9 +311,13 @@ const totalStaff =
 
         <Text style={styles.sectionMainTitle}>COMPANY BACKGROUND</Text>
 
-        <Text style={styles.sectionTitle}>Company Establishment, Mission and Vision</Text>
+        <Text style={styles.sectionTitle}>Company Establishment</Text>
         <Text style={styles.paragraph}>{background?.establishment_details || "N/A"}</Text>
+
+        <Text style={styles.sectionTitle}>Mission</Text>
         <Text style={styles.paragraph}>{background?.mission || "N/A"}</Text>
+
+        <Text style={styles.sectionTitle}>Vision</Text>
         <Text style={styles.paragraph}>{background?.vision || "N/A"}</Text>
 
         <Text style={styles.sectionTitle}>Business Activity</Text>
@@ -451,431 +329,393 @@ const totalStaff =
         <Text style={styles.sectionTitle}>Reason for Applying Halal Certification</Text>
         <Text style={styles.paragraph}>{background?.halal_certification_reason || "N/A"}</Text>
 
-        <Text style={styles.sectionTitle}>Our Premise Location:</Text>
+        <Text style={styles.sectionTitle}>Premise Location</Text>
         {premise?.layout_image_url ? (
           <Image style={styles.mapImage} src={premise.layout_image_url} />
         ) : (
           <Text style={styles.paragraph}>No premise map provided.</Text>
         )}
 
-        <Text style={styles.sectionTitle}>Google Map Link to Premise:</Text>
+        <Text style={styles.sectionTitle}>Google Map Link to Premise</Text>
         <Text style={styles.linkText}>
           {background?.premise_location_map_url || "https://goo.gl/xxxxxxxxxxxxx"}
         </Text>
+
       </Page>
 
       {/* ORGANISATION CHART TITLE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(6, organisationChartHeader)}
-  <Text style={styles.centeredTitle}>2. Organisation Chart</Text>
-</Page>
+        <Page size="A4" style={styles.page}>
+          {renderHeader(6, organisationChartHeader)}
+          <Text style={styles.centeredTitle}>2. Organisation Chart</Text>
+        </Page>
 
-{/* ORGANISATION CHART*/}
-<Page size="A4" style={styles.page}>
-  {renderHeader(7, organisationChartHeader)}
-  <Text style={styles.sectionMainTitle}>ORGANISATION CHART</Text>
+        {/* ORGANISATION CHART*/}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(7, organisationChartHeader)}
+          <Text style={styles.sectionMainTitle}>ORGANISATION CHART</Text>
 
-  {/* Description */}
-  <Text style={styles.paragraph}>
-    {organisationChartHeader.company_name || "This company"} is currently managed and 
-    operated with a team of {totalStaff} employees;{" "}
-    {organisationChartHeader.directors || 0} Directors,{" "}
-    {organisationChartHeader.managers || 0} Managers,{" "}
-    {organisationChartHeader.supervisors || 0} Supervisors and{" "}
-    {organisationChartHeader.employees || 0} general employees.
-  </Text>
+          {/* Description */}
+            // Calculate total staff based on table fields
+            const totalStaff =
+              (organisationChartHeader.directors || 0) +
+              (organisationChartHeader.managers || 0) +
+              (organisationChartHeader.supervisors || 0) +
+              (organisationChartHeader.employees || 0);
 
-  <Text style={styles.paragraph}>
-    The organisation charts consist of:
-    {"\n"}1. Company Organisation Chart (as a whole - if applicable)
-    {"\n"}2. Subsidiary Organisation Chart (the premise intends to apply halal)
-  </Text>
+          <Text style={styles.paragraph}>
+            {organisationChartHeader.company_name || "This company"} is currently managed and 
+            operated with a team of {totalStaff} employees;{" "}
+            {organisationChartHeader.directors || 0} Directors,{" "}
+            {organisationChartHeader.managers || 0} Managers,{" "}
+            {organisationChartHeader.supervisors || 0} Supervisors and{" "}
+            {organisationChartHeader.employees || 0} general employees.
+          </Text>
 
-  <Text style={styles.paragraph}>
-    To comply with the Malaysia Halal Certification requirements, our team 
-    members consist of {organisationChartHeader.muslim_employees || 0} Muslim 
-    employees who will operate, manage, determine and verify our Halal products.
-  </Text>
+          <Text style={styles.paragraph}>
+            The organisation charts consist of:
+            {"\n"}1. Company Organisation Chart (as a whole - if applicable)
+            {"\n"}2. Subsidiary Organisation Chart (the premise intends to apply halal)
+          </Text>
 
-  {/* Org Chart Image */}
-  {organisationChartHeader.org_chart_url ? (
-    <Image
-      src={organisationChartHeader.org_chart_url}
-      style={{ width: "100%", marginTop: 20 }}
-    />
-  ) : (
-    <Text style={styles.paragraph}>[ Organisation Chart Image Not Available ]</Text>
-  )}
-</Page>
+          <Text style={styles.paragraph}>
+            To comply with the Malaysia Halal Certification requirements, our team 
+            members consist of {organisationChartHeader.muslim_employees || 0} Muslim 
+            employees who will operate, manage, determine and verify our Halal products.
+          </Text>
 
-
-{/* HALAL POLICY TITLE PAGE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(8, halalPolicyHeader)}
-  <Text style={styles.centeredTitle}>3. Halal Policy</Text>
-</Page>
-
-{/* HALAL POLICY CONTENT PAGE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(9, halalPolicyHeader)}
-
-  {/* Company Header */}
-  <View style={styles.companyHeader}>
-    {info?.company_logo_url && (
-      <Image style={styles.smallLogo} src={info.company_logo_url} />
-    )}
-    <Text style={styles.companyNameText}>
-      {info?.company_name?.toUpperCase() || "COMPANY NAME"}
-    </Text>
-    <Text style={styles.ssmText}>({info?.ssm_no || "SSM NO"})</Text>
-  </View>
-
-  <Text style={styles.sectionMainTitle}>HALAL POLICY</Text>
-
-  {/* Halal Policy Text & Points */}
-  {(halalPolicy?.policy_text || halalPolicy?.policy_points?.length > 0) ? (
-    <>
-      {halalPolicy?.policy_text && (
-        <Text style={styles.paragraph}>{halalPolicy.policy_text}</Text>
-      )}
-
-      {halalPolicy?.policy_points?.map((point, idx) => (
-        <Text key={idx} style={styles.paragraph}>
-          {idx + 1}. {point}
-        </Text>
-      ))}
-    </>
-  ) : (
-    <Text style={styles.paragraph}>No halal policy data available.</Text>
-  )}
-
-  {/* Signature / Approval Section */}
-  <View style={{ marginTop: 40, width: "60%" }}>
-    <Text style={styles.paragraph}>……………………………………</Text>
-
-    <Text style={styles.paragraph}>
-      Name : {halalPolicy?.director_name || ""}
-    </Text>
-
-    <Text style={styles.paragraph}>
-      Designation : {halalPolicy?.director_designation || ""}
-    </Text>
-
-    <Text style={styles.paragraph}>
-      Date : {halalPolicy?.approval_date 
-        ? new Date(halalPolicy.approval_date).toLocaleDateString("en-GB")
-        : ""}
-    </Text>
-  </View>
-</Page>
-
-{/* PRODUCT LIST TITLE PAGE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(10, productListHeader)}
-  <Text style={styles.centeredTitle}>PRODUCT LIST</Text>
-</Page>
-
-{/* PRODUCT LIST SUMMARY PAGE (No. & Product Name ONLY) */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(11, productListHeader)}
-
-  <Text style={styles.sectionMainTitle}>PRODUCT LIST SUMMARY</Text>
-
-  {/* Table Header */}
-  <View style={styles.productTableHeader}>
-    <Text style={[styles.productHeaderCell, styles.colNo]}>
-      No.
-    </Text>
-
-    <Text
-      style={[
-        styles.productHeaderCell,
-        styles.colProduct,
-        { flex: 1 }   // fill remaining width, removes ghost column
-      ]}
-    >
-      Product Name
-    </Text>
-  </View>
-
-  {/* Table Rows */}
-  {productList.length > 0 ? (
-    productList.map((prod, idx) => (
-      <View key={prod?.id || idx} style={styles.productRow}>
-        <Text style={[styles.productCell, styles.colNo]}>
-          {idx + 1}
-        </Text>
-
-        <Text
-          style={[
-            styles.productCell,
-            styles.colProduct,
-            { flex: 1 }   // must match header
-          ]}
-        >
-          {prod?.product_name || "N/A"}
-        </Text>
-      </View>
-    ))
-  ) : (
-    <Text>No products found.</Text>
-  )}
-</Page>
-
-{/* PRODUCT LIST PAGE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(12, productListHeader)}
-
-  <Text style={styles.sectionMainTitle}>PRODUCT LIST</Text>
-
-  {/* Table Header */}
-  <View style={styles.productTableHeader}>
-    <Text style={[styles.productHeaderCell, styles.colNo]}>
-      No.
-    </Text>
-
-    <Text
-      style={[
-        styles.productHeaderCell,
-        styles.colProduct,
-        {
-          flexGrow: 0,
-          flexShrink: 0,
-          maxWidth: 150,   // 👈 key fix
-        }
-      ]}
-    >
-      Product Name
-    </Text>
-
-    <Text
-      style={[
-        styles.productHeaderCell,
-        styles.colIngredients,
-        { flex: 1 }
-      ]}
-    >
-      Ingredients
-    </Text>
-  </View>
-
-  {/* Table Rows */}
-  {productList.length > 0 ? (
-    productList.map((prod, idx) => (
-      <View key={prod?.id || idx} style={styles.productRow}>
-        <Text style={[styles.productCell, styles.colNo]}>
-          {idx + 1}
-        </Text>
-
-        <Text
-          style={[
-            styles.productCell,
-            styles.colProduct,
-            {
-              flexGrow: 0,
-              flexShrink: 0,
-              maxWidth: 150,   // 👈 matches header
-            }
-          ]}
-          wrap
-        >
-          {prod?.product_name || "N/A"}
-        </Text>
-
-        <Text
-          style={[
-            styles.productCell,
-            styles.colIngredients,
-            { flex: 1 }
-          ]}
-          wrap
-        >
-          {Array.isArray(prod?.ingredients_raw_materials)
-            ? prod.ingredients_raw_materials.join(", ")
-            : prod?.ingredients_raw_materials?.toString() || "N/A"}
-        </Text>
-      </View>
-    ))
-  ) : (
-    <Text>No products found.</Text>
-  )}
-</Page>
+          {/* Org Chart Image */}
+          {organisationChartHeader.org_chart_url ? (
+            <Image
+              src={organisationChartHeader.org_chart_url}
+              style={styles.orgChartImage}
+            />
+          ) : (
+            <Text style={styles.paragraph}>[ Organisation Chart Image Not Available ]</Text>
+          )}
+        </Page>
 
 
-{/* RAW MATERIAL MASTER TABLE (LANDSCAPE) */}
-{/* RAW MATERIAL MASTER TABLE (LANDSCAPE) */}
-<Page size="A4" orientation="landscape" style={styles.page}>
-  {renderHeader(12, rawMaterialMasterHeader)}
-  <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
+        {/* HALAL POLICY TITLE PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(8, halalPolicyHeader)}
+          <Text style={styles.centeredTitle}>3. Halal Policy</Text>
+        </Page>
 
-  <View style={styles.table}>
-    {/* HEADER */}
-    <View style={styles.tableRowHeader}>
-      <Text style={[styles.tableHeaderCell, styles.colMaterialName]}>Material Name</Text>
-      <Text style={[styles.tableHeaderCell, styles.colScientificName]}>Scientific / Brand Name</Text>
-      <Text style={[styles.tableHeaderCell, styles.colSource]}>Raw Material Source</Text>
-      <Text style={[styles.tableHeaderCell, styles.colManufacturer]}>Manufacturer</Text>
-      <Text style={[styles.tableHeaderCell, styles.colDeclaration]}>Material Declaration</Text>
-      <Text style={[styles.tableHeaderCell, styles.colHalalBody]}>Halal Cert Body</Text>
-      <Text style={[styles.tableHeaderCell, styles.colExpiry]}>Expiry Date</Text>
-    </View>
+        {/* HALAL POLICY CONTENT PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(9, halalPolicyHeader)}
 
-    {/* DATA */}
-    {rawMaterialMaster?.length > 0 ? (
-      rawMaterialMaster.map((item, idx) => (
-        <View key={item?.id || idx} style={styles.tableRow}>
-          <Text style={[styles.tableCell, styles.colMaterialName]}>{item?.raw_material_name || "N/A"}</Text>
-          <Text style={[styles.tableCell, styles.colScientificName]}>{item?.scientific_trade_name || "N/A"}</Text>
-          <Text style={[styles.tableCell, styles.colSource]}>{item?.source_of_raw_material || "N/A"}</Text>
-          <Text style={[styles.tableCell, styles.colManufacturer]}>{item?.manufacturer_name_address || "N/A"}</Text>
-          <Text style={[styles.tableCell, styles.colDeclaration]}>{item?.material_declaration_authorities ? "Yes" : "No"}</Text>
-          <Text style={[styles.tableCell, styles.colHalalBody]}>{item?.halal_cert_body || "N/A"}</Text>
-          <Text style={[styles.tableCell, styles.colExpiry]}>{item?.halal_cert_expiry || "N/A"}</Text>
-        </View>
-      ))
-    ) : (
-      <Text style={styles.paragraph}>No raw material data available.</Text>
-    )}
-  </View>
-</Page>
+          {/* Company Header */}
+          <View style={styles.companyHeader}>
+            {info?.company_logo_url && (
+              <Image style={styles.smallLogo} src={info.company_logo_url} />
+            )}
+            <Text style={styles.companyNameText}>
+              {info?.company_name?.toUpperCase() || "COMPANY NAME"}
+            </Text>
+            <Text style={styles.ssmText}>({info?.ssm_no || "SSM NO"})</Text>
+          </View>
 
-{/* RAW MATERIAL MASTER - SOP SECTION */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(12, rawMaterialMasterHeader)}
+          <Text style={styles.sectionMainTitle}>HALAL POLICY</Text>
 
-  <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTERLIST</Text>
-  <Text style={styles.sectionMainTitle}>SOP - RAW MATERIAL</Text>
+          {/* Halal Policy Text & Points */}
+          {(halalPolicy?.policy_text || halalPolicy?.policy_points?.length > 0) ? (
+            <>
+              {halalPolicy?.policy_text && (
+                <Text style={styles.paragraph}>{halalPolicy.policy_text}</Text>
+              )}
 
-  {rawMaterialMaster?.length > 0 ? (
-    rawMaterialMaster.map((item, idx) => (
-      <View key={item?.id || idx} style={{ marginBottom: 14 }}>
+              {halalPolicy?.policy_points?.map((point, idx) => (
+                <Text key={idx} style={styles.paragraph}>
+                  {toRoman(idx)}. {point}
+                </Text>
+              ))}
+            </>
+          ) : (
+            <Text style={styles.paragraph}>No halal policy data available.</Text>
+          )}
 
-        <Text style={styles.sopTitle}>Objective</Text>
-        <Text style={styles.sopInput}>{item?.objective || "N/A"}</Text>
+          {/* Signature / Approval Section */}
+          <View style={styles.signatureContainer}>
+            <Text style={styles.paragraph}>……………………………………</Text>
 
-        <Text style={styles.sopTitle}>Scope</Text>
-        <Text style={styles.sopInput}>{item?.scope || "N/A"}</Text>
+            <Text style={styles.paragraph}>
+              Name : {halalPolicy?.director_name || ""}
+            </Text>
 
-        <Text style={styles.sopTitle}>Responsibilities</Text>
-        <Text style={styles.sopInput}>{item?.responsibilities || "N/A"}</Text>
+            <Text style={styles.paragraph}>
+              Designation : {halalPolicy?.director_designation || ""}
+            </Text>
 
-        <Text style={styles.sopTitle}>Frequency</Text>
-        <Text style={styles.sopInput}>{item?.frequency || "N/A"}</Text>
+            <Text style={styles.paragraph}>
+              Date : {halalPolicy?.approval_date 
+                ? new Date(halalPolicy.approval_date).toLocaleDateString("en-GB")
+                : ""}
+            </Text>
+          </View>
+        </Page>
 
-        <Text style={styles.sopTitle}>Purchase</Text>
-        <Text style={styles.sopInput}>{item?.purchase || "N/A"}</Text>
+        {/* PRODUCT LIST TITLE PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(10, productListHeader)}
+          <Text style={styles.centeredTitle}>PRODUCT LIST</Text>
+        </Page>
 
-        <Text style={styles.sopTitle}>Receipt</Text>
-        <Text style={styles.sopInput}>{item?.receipt || "N/A"}</Text>
+        {/* PRODUCT LIST SUMMARY PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(11, productListHeader)}
+          <Text style={styles.sectionMainTitle}>PRODUCT LIST SUMMARY</Text>
 
-        <Text style={styles.sopTitle}>Storage</Text>
-        <Text style={styles.sopInput}>{item?.storage || "N/A"}</Text>
+          <View style={styles.productTableHeader}>
+            <Text style={[styles.productHeaderCell, styles.colNo]}>No.</Text>
+            <Text style={[styles.productHeaderCell, styles.colProduct, { flex: 1 }]}>
+              Product Name
+            </Text>
+          </View>
 
-        <Text style={styles.sopTitle}>Record</Text>
-        <Text style={styles.sopInput}>{item?.record || "N/A"}</Text>
+          {productList.map((prod, idx) => (
+            <View key={prod?.id || idx} style={styles.productRow}>
+              <Text style={[styles.productCell, styles.colNo]}>{idx + 1}</Text>
+              <Text style={[styles.productCell, styles.colProduct, { flex: 1 }]}>
+                {prod?.product_name || "N/A"}
+              </Text>
+            </View>
+          ))}
+        </Page>
 
-      </View>
-    ))
-  ) : (
-    <Text style={styles.paragraph}>No SOP data available.</Text>
-  )}
-</Page>
+        {/* FULL PRODUCT LIST PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(12, productListHeader)}
+          <Text style={styles.sectionMainTitle}>PRODUCT LIST</Text>
+
+          <View style={styles.productTableHeader}>
+            <Text style={[styles.productHeaderCell, styles.colNo]}>No.</Text>
+            <Text style={[styles.productHeaderCell, styles.colProduct, { maxWidth: 150 }]}>
+              Product Name
+            </Text>
+            <Text style={[styles.productHeaderCell, styles.colIngredients, { flex: 1 }]}>
+              Ingredients
+            </Text>
+          </View>
+
+          {productList.map((prod, idx) => (
+            <View key={prod?.id || idx} style={styles.productRow}>
+              <Text style={[styles.productCell, styles.colNo]}>{idx + 1}</Text>
+              <Text
+                style={[styles.productCell, styles.colProduct, { maxWidth: 150 }]}
+                wrap
+              >
+                {prod?.product_name || "N/A"}
+              </Text>
+              <Text
+                style={[styles.productCell, styles.colIngredients, { flex: 1 }]}
+                wrap
+              >
+                {Array.isArray(prod?.ingredients_raw_materials)
+                  ? prod.ingredients_raw_materials.join(", ")
+                  : prod?.ingredients_raw_materials || "N/A"}
+              </Text>
+            </View>
+          ))}
+        </Page>
+
+        {/* RAW MATERIAL TITLE PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(13, rawMaterialMasterHeader)}
+          <Text style={styles.centeredTitle}>RAW MATERIAL MASTER</Text>
+        </Page>
+
+        {/* RAW MATERIAL MASTER TABLE (LANDSCAPE) */}
+        <Page size="A4" orientation="landscape" style={styles.page}>
+          {renderHeader(14, rawMaterialMasterHeader)}
+          <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
+
+          <View style={styles.rmMasterTable}>
+            <View style={styles.rmMasterHeaderRow}>
+              <Text style={[styles.rmMasterHeaderCell, styles.colMaterialName]}>Material Name</Text>
+              <Text style={[styles.rmMasterHeaderCell, styles.colScientificName]}>Scientific / Brand Name</Text>
+              <Text style={[styles.rmMasterHeaderCell, styles.colSource]}>Raw Material Source</Text>
+              <Text style={[styles.rmMasterHeaderCell, styles.colManufacturer]}>Manufacturer</Text>
+              <Text style={[styles.rmMasterHeaderCell, styles.colDeclaration]}>Material Declaration</Text>
+              <Text style={[styles.rmMasterHeaderCell, styles.colHalalBody]}>Halal Cert Body</Text>
+              <Text style={[styles.rmMasterHeaderCell, styles.colExpiry]}>Expiry Date</Text>
+            </View>
+
+            {rawMaterialMaster?.length > 0 ? (
+              rawMaterialMaster.map((item, idx) => (
+                <View key={item?.id || idx} style={styles.rmMasterRow}>
+                  <Text style={[styles.rmMasterCell, styles.colMaterialName]}>{item?.raw_material_name || "N/A"}</Text>
+                  <Text style={[styles.rmMasterCell, styles.colScientificName]}>{item?.scientific_trade_name || "N/A"}</Text>
+                  <Text style={[styles.rmMasterCell, styles.colSource]}>{item?.source_of_raw_material || "N/A"}</Text>
+                  <Text style={[styles.rmMasterCell, styles.colManufacturer]}>{item?.manufacturer_name_address || "N/A"}</Text>
+                  <Text style={[styles.rmMasterCell, styles.colDeclaration]}>
+                    {item?.material_declaration_authorities ? "Yes" : "No"}
+                  </Text>
+                  <Text style={[styles.rmMasterCell, styles.colHalalBody]}>{item?.halal_cert_body || "N/A"}</Text>
+                  <Text style={[styles.rmMasterCell, styles.colExpiry]}>{item?.halal_cert_expiry || "N/A"}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.paragraph}>No raw material data available.</Text>
+            )}
+          </View>
+        </Page>
 
 
-{/* RAW MATERIAL SUMMARY — TITLE PAGE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(14, rawMaterialSummaryHeader)}
+        {/* RAW MATERIAL MASTER - SOP SECTION */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(15, rawMaterialMasterHeader)}
 
-  <Text style={styles.centeredTitle}>RAW MATERIAL SUMMARY</Text>
-</Page>
+          <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
+          <Text style={styles.sectionSubTitle}>SOP – RAW MATERIAL</Text>
 
-{/* RAW MATERIAL SUMMARY*/}
-<Page size="A4" style={styles.page}>
-  {renderHeader(14, rawMaterialSummaryHeader)}
+          {rawMaterialMaster?.length > 0 ? (
+            rawMaterialMaster.map((item, idx) => (
+              <View key={item?.id || idx} style={{ marginBottom: 14 }}>
 
-  <Text style={styles.sectionMainTitle}>RAW MATERIAL SUMMARY</Text>
+                <Text style={styles.sopTitle}>Objective</Text>
+                <Text style={styles.sopInput}>{item?.objective || "N/A"}</Text>
 
-  {/* TABLE HEADER */}
-  <View style={styles.rawSummaryTableHeader}>
-    <Text style={[styles.rawSummaryHeaderCell, styles.colNo]}>No.</Text>
-    <Text style={[styles.rawSummaryHeaderCell, styles.colMaterial]}>Material Name</Text>
-    <Text style={[styles.rawSummaryHeaderCell, styles.colSupplier]}>Supplier</Text>
-    <Text style={[styles.rawSummaryHeaderCell, styles.colCert]}>Cert No.</Text>
-    <Text style={[styles.rawSummaryHeaderCell, styles.colExpiry]}>Expiry Date</Text>
-  </View>
+                <Text style={styles.sopTitle}>Scope</Text>
+                <Text style={styles.sopInput}>{item?.scope || "N/A"}</Text>
 
-  {/* TABLE BODY */}
-  {rawMaterialSummary.length > 0 ? (
-    rawMaterialSummary.map((item, idx) => (
-      <View key={item?.id || idx} style={styles.rawSummaryRow}>
-        <Text style={[styles.rawSummaryCell, styles.colNo]}>
-          {idx + 1}
-        </Text>
+                <Text style={styles.sopTitle}>Responsibilities</Text>
+                <Text style={styles.sopInput}>{item?.responsibilities || "N/A"}</Text>
 
-        <Text style={[styles.rawSummaryCell, styles.colMaterial]}>
-          {item.material_name || "N/A"}
-        </Text>
+                <Text style={styles.sopTitle}>Frequency</Text>
+                <Text style={styles.sopInput}>{item?.frequency || "N/A"}</Text>
 
-        <Text style={[styles.rawSummaryCell, styles.colSupplier]}>
-          {item.supplier || "N/A"}
-        </Text>
+                <Text style={styles.sopTitle}>Purchase</Text>
+                <Text style={styles.sopInput}>{item?.purchase || "N/A"}</Text>
 
-        <Text style={[styles.rawSummaryCell, styles.colCert]}>
-          {item.cert_no || "N/A"}
-        </Text>
+                <Text style={styles.sopTitle}>Receipt</Text>
+                <Text style={styles.sopInput}>{item?.receipt || "N/A"}</Text>
 
-        <Text style={[styles.rawSummaryCell, styles.colExpiry]}>
-          {item.expiry_date || "N/A"}
-        </Text>
-      </View>
-    ))
-  ) : (
-    <Text style={styles.paragraph}>No raw material summary data available.</Text>
-  )}
-</Page>
+                <Text style={styles.sopTitle}>Storage</Text>
+                <Text style={styles.sopInput}>{item?.storage || "N/A"}</Text>
+
+                <Text style={styles.sopTitle}>Record</Text>
+                <Text style={styles.sopInput}>{item?.record || "N/A"}</Text>
+
+              </View>
+            ))
+          ) : (
+            <Text style={styles.paragraph}>No SOP data available.</Text>
+          )}
+        </Page>
 
 
-      {/* PRODUCT FLOW CHART RAW */}
+        {/* RAW MATERIAL SUMMARY — TITLE PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(16, rawMaterialSummaryHeader)}
+
+          <Text style={styles.centeredTitle}>RAW MATERIAL SUMMARY</Text>
+        </Page>
+
+        {/* RAW MATERIAL SUMMARY */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(17, rawMaterialSummaryHeader)}
+
+          <Text style={styles.sectionMainTitle}>RAW MATERIAL SUMMARY</Text>
+
+          {/* TABLE HEADER */}
+          <View style={styles.rawSummaryTableHeader}>
+            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColNo]}>No.</Text>
+            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColMaterial]}>Material Name</Text>
+            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColSupplier]}>Supplier</Text>
+            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColCert]}>Cert No.</Text>
+            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColExpiry]}>Expiry Date</Text>
+          </View>
+
+          {/* TABLE BODY */}
+          {rawMaterialSummary.length > 0 ? (
+            rawMaterialSummary.map((item, idx) => (
+              <View key={item?.id || idx} style={styles.rawSummaryRow}>
+                <Text style={[styles.rawSummaryCell, styles.rmSummaryColNo]}>
+                  {idx + 1}
+                </Text>
+
+                <Text style={[styles.rawSummaryCell, styles.rmSummaryColMaterial]}>
+                  {item.material_name || "N/A"}
+                </Text>
+
+                <Text style={[styles.rawSummaryCell, styles.rmSummaryColSupplier]}>
+                  {item.supplier || "N/A"}
+                </Text>
+
+                <Text style={[styles.rawSummaryCell, styles.rmSummaryColCert]}>
+                  {item.cert_no || "N/A"}
+                </Text>
+
+                <Text style={[styles.rawSummaryCell, styles.rmSummaryColExpiry]}>
+                  {item.expiry_date || "N/A"}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.paragraph}>No raw material summary data available.</Text>
+          )}
+        </Page>
+
+      {/* PRODUCT FLOW CHART RAW — TITLE PAGE */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(18, productFlowRawHeader)}
+          <Text style={styles.centeredTitle}>PRODUCT FLOW CHART (RAW)</Text>
+        </Page>
+
+        {/* PRODUCT FLOW CHART RAW */}
+        <Page size="A4" style={styles.page}>
+          {renderHeader(19, productFlowRawHeader)}
+          <Text style={styles.sectionMainTitle}>PRODUCT FLOW CHART (RAW)</Text>
+
+          <Text style={styles.paragraph}>
+            {productFlowRaw?.description || "No description provided."}
+          </Text>
+
+          {productFlowRaw?.flowchart_image_url ? (
+            <Image style={styles.mapImage} src={productFlowRaw.flowchart_image_url} />
+          ) : (
+            <Text style={styles.paragraph}>No image provided.</Text>
+          )}
+        </Page>
+
+
+      {/* PRODUCT FLOW PROCESS — TITLE PAGE */}
       <Page size="A4" style={styles.page}>
-        {renderHeader(16, productFlowRawHeader)}
-        <Text style={styles.sectionMainTitle}>PRODUCT FLOW CHART (RAW)</Text>
-
-        <Text style={styles.paragraph}>
-          {productFlowRaw?.description || "No description provided."}
-        </Text>
-
-        {productFlowRaw?.flowchart_image_url ? (
-          <Image style={styles.mapImage} src={productFlowRaw.flowchart_image_url} />
-        ) : (
-          <Text style={styles.paragraph}>No image provided.</Text>
-        )}
+        {renderHeader(20, productFlowProcessHeader)}
+        <Text style={styles.centeredTitle}>PRODUCT FLOW PROCESS</Text>
       </Page>
 
       {/* PRODUCT FLOW PROCESS */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(18, productFlowProcessHeader)}
-  <Text style={styles.sectionMainTitle}>PRODUCT FLOW PROCESS</Text>
+      <Page size="A4" style={styles.page}>
+        {renderHeader(21, productFlowProcessHeader)}
+        <Text style={styles.sectionMainTitle}>PRODUCT FLOW PROCESS</Text>
 
-  {/* DESCRIPTION */}
-  <Text style={styles.paragraph}>
-    {productFlowProcess?.description || "No description provided."}
-  </Text>
+        {/* DESCRIPTION */}
+        <Text style={styles.paragraph}>
+          {productFlowProcess?.description || "No description provided."}
+        </Text>
 
-  {/* FLOWCHART IMAGE */}
-  {productFlowProcess?.flowchart_image_url ? (
-    <Image
-      src={productFlowProcess.flowchart_image_url}
-      style={styles.flowchartImage}
-    />
-  ) : (
-    <Text style={styles.paragraph}>No flowchart image available.</Text>
-  )}
-</Page>
+        {/* FLOWCHART IMAGE */}
+        {productFlowProcess?.flowchart_image_url ? (
+          <Image
+            src={productFlowProcess.flowchart_image_url}
+            style={styles.mapImage}
+          />
+        ) : (
+          <Text style={styles.paragraph}>No flowchart image available.</Text>
+        )}
+      </Page>
 
+      {/* PREMISE PLAN — TITLE PAGE */}
+      <Page size="A4" style={styles.page}>
+        {renderHeader(22, premisePlanHeader)}
+        <Text style={styles.centeredTitle}>PREMISE PLAN</Text>
+      </Page>
 
       {/* PREMISE PLAN */}
       <Page size="A4" style={styles.page}>
-        {renderHeader(20, premisePlanHeader)}
+        {renderHeader(23, premisePlanHeader)}
         <Text style={styles.sectionMainTitle}>PREMISE PLAN</Text>
 
         {premise?.layout_image_url ? (
@@ -884,54 +724,54 @@ const totalStaff =
           <Text style={styles.paragraph}>No premise plan image provided.</Text>
         )}
 
-        <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Description</Text>
+        <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.paragraph}>
           {premise?.description || "No description provided."}
         </Text>
       </Page>
 
-{/* TRACEABILITY TITLE PAGE */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(21, traceabilityHeader)}
-  <Text style={styles.centeredTitle}>TRACEABILITY</Text>
-</Page>
 
-{/* TRACEABILITY REFERENCE 1 PAGE */}
-{traceability.length > 0 &&
-  traceability.map((item, idx) => (
-    <Page key={`ref1-${idx}`} size="A4" style={styles.page}>
-      {renderHeader(22, traceabilityHeader)}
+      {/* TRACEABILITY — TITLE PAGE */}
+      <Page size="A4" style={styles.page}>
+        {renderHeader(24, traceabilityHeader)}
+        <Text style={styles.centeredTitle}>TRACEABILITY</Text>
+      </Page>
 
-      <Text style={styles.referenceTitle}>REFERENCE 1</Text>
+      {/* TRACEABILITY — REFERENCE 1 */}
+      {traceability.length > 0 &&
+        traceability.map((item, idx) => (
+          <Page key={`trace-ref1-${idx}`} size="A4" style={styles.page}>
+            {renderHeader(25, traceabilityHeader)}
 
-      {item?.file1_url ? (
-        <Image style={styles.traceImageLarge} src={item.file1_url} />
-      ) : (
-        <Text style={styles.paragraph}>No Reference 1 file provided.</Text>
-      )}
-    </Page>
-  ))
-}
+            <Text style={styles.sectionMainTitle}>REFERENCE 1</Text>
 
-{/* TRACEABILITY REFERENCE 2 PAGE */}
-{traceability.length > 0 &&
-  traceability.map((item, idx) => (
-    <Page key={`ref2-${idx}`} size="A4" style={styles.page}>
-      {renderHeader(23, traceabilityHeader)}
+            {item?.file1_url ? (
+              <Image style={styles.traceImageLarge} src={item.file1_url} />
+            ) : (
+              <Text style={styles.paragraph}>No Reference 1 file provided.</Text>
+            )}
+          </Page>
+        ))
+      }
 
-      <Text style={styles.referenceTitle}>REFERENCE 2</Text>
+      {/* TRACEABILITY — REFERENCE 2 */}
+      {traceability.length > 0 &&
+        traceability.map((item, idx) => (
+          <Page key={`trace-ref2-${idx}`} size="A4" style={styles.page}>
+            {renderHeader(26, traceabilityHeader)}
 
-      {item?.file2_url ? (
-        <Image style={styles.traceImageLarge} src={item.file2_url} />
-      ) : (
-        <Text style={styles.paragraph}>No Reference 2 file provided.</Text>
-      )}
-    </Page>
-  ))
-}
+            <Text style={styles.sectionMainTitle}>REFERENCE 2</Text>
 
-    </Document>
-  );
-};
+            {item?.file2_url ? (
+              <Image style={styles.traceImageLarge} src={item.file2_url} />
+            ) : (
+              <Text style={styles.paragraph}>No Reference 2 file provided.</Text>
+            )}
+          </Page>
+        ))
+      }
+          </Document>
+        );
+      };
 
 export default IHCSReport;
