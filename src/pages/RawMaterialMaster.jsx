@@ -39,9 +39,7 @@ export default function RawMaterialMasterList() {
   useEffect(() => {
     const fetchUser = async () => {
       if (userId) return;
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return navigate("/login");
       setUserId(user.id);
     };
@@ -49,26 +47,22 @@ export default function RawMaterialMasterList() {
   }, [userId, navigate]);
 
   // ---------------- FETCH EXISTING DATA ----------------
-useEffect(() => {
-  const fetchData = async () => {
-    if (!companyInfoId) return;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!companyInfoId) return;
 
-    // 1️⃣ FETCH MATERIALS (LIST)
-    const { data: materialsData, error: materialsError } = await supabase
-      .from("raw_material_master")
-      .select("*")
-      .eq("company_info_id", companyInfoId);
+      // 1️⃣ Fetch materials
+      const { data: materialsData, error: materialsError } = await supabase
+        .from("raw_material_master")
+        .select("*")
+        .eq("company_info_id", companyInfoId);
 
-    if (materialsError) {
-      console.error("❌ Error fetching raw materials:", materialsError.message);
-      return;
-    }
-
-    if (materialsData?.length) {
-      setMaterials(materialsData);
-    } else {
-      setMaterials([
-        {
+      if (materialsError) {
+        console.error("❌ Error fetching raw materials:", materialsError.message);
+      } else if (materialsData?.length) {
+        setMaterials(materialsData);
+      } else {
+        setMaterials([{
           raw_material_name: "",
           scientific_trade_name: "",
           source_of_raw_material: "",
@@ -76,47 +70,43 @@ useEffect(() => {
           material_declaration_authorities: false,
           halal_cert_body: "CICOT",
           halal_cert_expiry: "",
-        },
-      ]);
-    }
+        }]);
+      }
 
-    // 2️⃣ FETCH SOP (SINGLE DOCUMENT)
-    const { data: sopData, error: sopError } = await supabase
-      .from("raw_material_sop")
-      .select("*")
-      .eq("company_info_id", companyInfoId)
-      .single();
+      // 2️⃣ Fetch SOP
+      const { data: sopData, error: sopError } = await supabase
+        .from("raw_material_sop")
+        .select("*")
+        .eq("company_info_id", companyInfoId)
+        .single();
 
-    if (sopError && sopError.code !== "PGRST116") {
-      console.error("❌ Error fetching SOP:", sopError.message);
-    }
+      if (sopError && sopError.code !== "PGRST116") {
+        console.error("❌ Error fetching SOP:", sopError.message);
+      } else if (sopData) {
+        setSop({
+          objective: sopData.objective || "",
+          scope: sopData.scope || "",
+          responsibilities: sopData.responsibilities || "",
+          frequency: sopData.frequency || "",
+          purchase: sopData.purchase || "",
+          receipt: sopData.receipt || "",
+          storage: sopData.storage || "",
+          record: sopData.record || "",
+          implementation_date: sopData.implementation_date || "",
+          reference_no: sopData.reference_no || "",
+          review_no: sopData.review_no || "",
+        });
+      }
+    };
 
-    if (sopData) {
-      setSop({
-        objective: sopData.objective || "",
-        scope: sopData.scope || "",
-        responsibilities: sopData.responsibilities || "",
-        frequency: sopData.frequency || "",
-        purchase: sopData.purchase || "",
-        receipt: sopData.receipt || "",
-        storage: sopData.storage || "",
-        record: sopData.record || "",
-        implementation_date: sopData.implementation_date || "",
-        reference_no: sopData.reference_no || "",
-        review_no: sopData.review_no || "",
-      });
-    }
-  };
-
-  fetchData();
-}, [companyInfoId]);
-
+    fetchData();
+  }, [companyInfoId]);
 
   // ---------------- HANDLERS ----------------
   const handleChange = (index, field, value) => {
-    const newMaterials = [...materials];
-    newMaterials[index][field] = value;
-    setMaterials(newMaterials);
+    const updated = [...materials];
+    updated[index][field] = value;
+    setMaterials(updated);
   };
 
   const handleSopChange = (field, value) => {
@@ -124,8 +114,8 @@ useEffect(() => {
   };
 
   const addRow = () => {
-    setMaterials([
-      ...materials,
+    setMaterials(prev => [
+      ...prev,
       {
         raw_material_name: "",
         scientific_trade_name: "",
@@ -144,24 +134,18 @@ useEffect(() => {
       await supabase.from("raw_material_master").delete().eq("id", row.id);
     }
     const updated = materials.filter((_, i) => i !== index);
-    setMaterials(
-      updated.length
-        ? updated
-        : [
-            {
-              raw_material_name: "",
-              scientific_trade_name: "",
-              source_of_raw_material: "",
-              manufacturer_name_address: "",
-              material_declaration_authorities: false,
-              halal_cert_body: "CICOT",
-              halal_cert_expiry: "",
-            },
-          ]
-    );
+    setMaterials(updated.length ? updated : [{
+      raw_material_name: "",
+      scientific_trade_name: "",
+      source_of_raw_material: "",
+      manufacturer_name_address: "",
+      material_declaration_authorities: false,
+      halal_cert_body: "CICOT",
+      halal_cert_expiry: "",
+    }]);
   };
 
-// ---------------- SAVE ALL RAW MATERIALS + SOP ----------------
+ // ---------------- SAVE ALL ----------------
 const saveAll = async () => {
   if (!companyInfoId) {
     alert("❌ Missing Company Info ID. Save company info first.");
@@ -169,7 +153,7 @@ const saveAll = async () => {
   }
 
   try {
-    // 1️⃣ Save materials (loop)
+    // 1️⃣ Save materials
     for (const material of materials) {
       const record = {
         company_info_id: companyInfoId,
@@ -177,24 +161,27 @@ const saveAll = async () => {
         scientific_trade_name: material.scientific_trade_name || "",
         source_of_raw_material: material.source_of_raw_material || "",
         manufacturer_name_address: material.manufacturer_name_address || "",
-        material_declaration_authorities:
-          material.material_declaration_authorities || false,
+        material_declaration_authorities: material.material_declaration_authorities || false,
         halal_cert_body: material.halal_cert_body || "",
-        halal_cert_expiry: material.halal_cert_expiry || null,
+        halal_cert_expiry: material.halal_cert_expiry || null, // empty string converted to null
       };
 
       if (material.id) {
-        await supabase
+        const { error: updateError } = await supabase
           .from("raw_material_master")
           .update(record)
           .eq("id", material.id);
+        if (updateError) console.error("❌ Material update error:", updateError);
       } else {
-        await supabase.from("raw_material_master").insert([record]);
+        const { error: insertError } = await supabase
+          .from("raw_material_master")
+          .insert([record]);
+        if (insertError) console.error("❌ Material insert error:", insertError);
       }
     }
 
-    // 2️⃣ Save SOP
-    await supabase.from("raw_material_sop").upsert({
+    // 2️⃣ Save SOP (upsert ensures insert or update)
+    const sopPayload = {
       company_info_id: companyInfoId,
       objective: sop.objective || "",
       scope: sop.scope || "",
@@ -204,46 +191,56 @@ const saveAll = async () => {
       receipt: sop.receipt || "",
       storage: sop.storage || "",
       record: sop.record || "",
-      implementation_date: sop.implementation_date || null,
+      implementation_date: sop.implementation_date || null, // convert empty string to null
       reference_no: sop.reference_no || "",
       review_no: sop.review_no || "",
       updated_at: new Date().toISOString(),
-    });
+    };
 
-    alert("✅ Raw materials & SOP saved successfully!");
+    console.log("Saving SOP payload:", sopPayload); // debug log
+
+    const { data: sopResult, error: sopError } = await supabase
+      .from("raw_material_sop")
+      .upsert(sopPayload, {
+        onConflict: "company_info_id",
+        returning: "representation",
+      });
+
+    if (sopError) {
+      console.error("❌ SOP save error:", sopError);
+      alert("❌ Error saving SOP. Check console for details.");
+    } else {
+      console.log("✅ SOP saved:", sopResult);
+      alert("✅ Raw materials & SOP saved successfully!");
+    }
+
   } catch (err) {
-    console.error("❌ Unexpected error saving materials:", err);
+    console.error("❌ Unexpected error saving data:", err);
+    alert("❌ Unexpected error. Check console for details.");
   }
 };
 
-// ---------------- BUILD DATA TO PASS TO NEXT PAGE ----------------
-const buildRawMaterialData = () => ({
-  materials,
-  sop: { ...sop }, // pass all SOP fields
-});
-
-// ---------------- NAVIGATION HANDLERS ----------------
-const handleSaveBtn = async () => {
-  await saveAll();
-  const rawMaterialData = buildRawMaterialData();
-
-  navigate("/rawmaterialsummary", {
-    state: { userId, companyInfoId, rawMaterialData },
+  // ---------------- BUILD DATA FOR NEXT PAGE ----------------
+  const buildRawMaterialData = () => ({
+    materials,
+    sop: { ...sop },
   });
-};
 
-const handleNextBtn = () => {
-  const rawMaterialData = buildRawMaterialData();
+  // ---------------- NAVIGATION ----------------
+  const handleSaveBtn = async () => {
+    await saveAll();
+    const rawMaterialData = buildRawMaterialData();
+    navigate("/rawmaterialsummary", { state: { userId, companyInfoId, rawMaterialData } });
+  };
 
-  navigate("/rawmaterialsummary", {
-    state: { userId, companyInfoId, rawMaterialData },
-  });
-};
+  const handleNextBtn = () => {
+    const rawMaterialData = buildRawMaterialData();
+    navigate("/rawmaterialsummary", { state: { userId, companyInfoId, rawMaterialData } });
+  };
 
-const handleBackBtn = () => {
-  navigate("/productlist", { state: { userId, companyInfoId } });
-};
-
+  const handleBackBtn = () => {
+    navigate("/productlist", { state: { userId, companyInfoId } });
+  };
 
   return (
     <div className="min-h-screen flex bg-[#f4f8ff] font-poppins text-black flex-col">
