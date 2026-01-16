@@ -737,36 +737,56 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
 
       {/* TRACEABILITY — REFERENCE 1 */}
       {traceability.length > 0 &&
-        traceability.map((item, idx) => (
-          <Page key={`trace-ref1-${idx}`} size="A4" style={styles.page}>
-            {renderHeader(25, traceabilityHeader)}
+        traceability.map((item, idx) => {
+          const currentHeader = {
+            implementation_date: item?.implementation_date
+              ? new Date(item.implementation_date).toLocaleDateString("en-GB")
+              : "No value",
+            reference_no: item?.reference_no || "No value",
+            review_no: item?.review_no || "No value",
+            document_name: "IHCS/HAS",
+          };
 
-            <Text style={styles.sectionMainTitle}>REFERENCE 1</Text>
+          return (
+            <Page key={`trace-ref1-${idx}`} size="A4" style={styles.page}>
+              {renderHeader(25, currentHeader)}
+              <Text style={styles.sectionMainTitle}>REFERENCE 1</Text>
 
-            {item?.file1_url ? (
-              <Image style={styles.traceImageLarge} src={item.file1_url} />
-            ) : (
-              <Text style={styles.paragraph}>No Reference 1 file provided.</Text>
-            )}
-          </Page>
-        ))
+              {item?.file1_url ? (
+                <Image style={styles.traceImageLarge} src={item.file1_url} />
+              ) : (
+                <Text style={styles.paragraph}>No Reference 1 file provided.</Text>
+              )}
+            </Page>
+          );
+        })
       }
 
       {/* TRACEABILITY — REFERENCE 2 */}
       {traceability.length > 0 &&
-        traceability.map((item, idx) => (
-          <Page key={`trace-ref2-${idx}`} size="A4" style={styles.page}>
-            {renderHeader(26, traceabilityHeader)}
+        traceability.map((item, idx) => {
+          const currentHeader = {
+            implementation_date: item?.implementation_date
+              ? new Date(item.implementation_date).toLocaleDateString("en-GB")
+              : "No value",
+            reference_no: item?.reference_no || "No value",
+            review_no: item?.review_no || "No value",
+            document_name: "IHCS/HAS",
+          };
 
-            <Text style={styles.sectionMainTitle}>REFERENCE 2</Text>
+          return (
+            <Page key={`trace-ref2-${idx}`} size="A4" style={styles.page}>
+              {renderHeader(26, currentHeader)}
+              <Text style={styles.sectionMainTitle}>REFERENCE 2</Text>
 
-            {item?.file2_url ? (
-              <Image style={styles.traceImageLarge} src={item.file2_url} />
-            ) : (
-              <Text style={styles.paragraph}>No Reference 2 file provided.</Text>
-            )}
-          </Page>
-        ))
+              {item?.file2_url ? (
+                <Image style={styles.traceImageLarge} src={item.file2_url} />
+              ) : (
+                <Text style={styles.paragraph}>No Reference 2 file provided.</Text>
+              )}
+            </Page>
+          );
+        })
       }
           </Document>
         );
