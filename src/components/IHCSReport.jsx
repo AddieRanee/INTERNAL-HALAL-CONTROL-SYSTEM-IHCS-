@@ -146,8 +146,6 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
   const companyBackgroundHeader = background;
   const organisationChartHeader = orgChart;
   const halalPolicyHeader = halalPolicy;
-
-  // ======= NEW: Added all missing headers (fix crash) =======
   const productListHeader = productList?.[0] || {};
   const rawMaterialMasterHeader = rawMaterialMaster?.[0] || {};
   const rawMaterialSummaryHeader = rawMaterialSummary?.[0] || {};
@@ -155,6 +153,13 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
   const productFlowProcessHeader = productFlowProcess || {};
   const premisePlanHeader = premise || {};
   const traceabilityHeader = traceability?.[0] || {};
+
+  // ======= TOTAL STAFF SAFE CALCULATION =======
+  const totalStaff =
+    (organisationChartHeader?.directors || 0) +
+    (organisationChartHeader?.managers || 0) +
+    (organisationChartHeader?.supervisors || 0) +
+    (organisationChartHeader?.employees || 0);
 
   // ======= FIXED HEADER RENDERER =======
   const renderHeader = (pageNumber, header = {}) => {
@@ -355,13 +360,6 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
           <Text style={styles.sectionMainTitle}>ORGANISATION CHART</Text>
 
           {/* Description */}
-            // Calculate total staff based on table fields
-            const totalStaff =
-              (organisationChartHeader.directors || 0) +
-              (organisationChartHeader.managers || 0) +
-              (organisationChartHeader.supervisors || 0) +
-              (organisationChartHeader.employees || 0);
-
           <Text style={styles.paragraph}>
             {organisationChartHeader.company_name || "This company"} is currently managed and 
             operated with a team of {totalStaff} employees;{" "}
