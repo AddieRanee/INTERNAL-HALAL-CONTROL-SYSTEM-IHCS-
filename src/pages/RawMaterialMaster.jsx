@@ -161,13 +161,15 @@ useEffect(() => {
     );
   };
 
+// ---------------- SAVE ALL RAW MATERIALS + SOP ----------------
 const saveAll = async () => {
-  if (!companyInfoId)
-    return alert("❌ Missing Company Info ID. Save company info first.");
+  if (!companyInfoId) {
+    alert("❌ Missing Company Info ID. Save company info first.");
+    return;
+  }
 
   try {
-
-    // 1️⃣ save materials (loop)
+    // 1️⃣ Save materials (loop)
     for (const material of materials) {
       const record = {
         company_info_id: companyInfoId,
@@ -187,13 +189,11 @@ const saveAll = async () => {
           .update(record)
           .eq("id", material.id);
       } else {
-        await supabase
-          .from("raw_material_master")
-          .insert([record]);
+        await supabase.from("raw_material_master").insert([record]);
       }
     }
 
-    // 2️⃣ SAVE SOP — MUST BE HERE (inside async)
+    // 2️⃣ Save SOP
     await supabase.from("raw_material_sop").upsert({
       company_info_id: companyInfoId,
       objective: sop.objective || "",
@@ -211,46 +211,39 @@ const saveAll = async () => {
     });
 
     alert("✅ Raw materials & SOP saved successfully!");
-
   } catch (err) {
     console.error("❌ Unexpected error saving materials:", err);
   }
 };
 
-  
+// ---------------- BUILD DATA TO PASS TO NEXT PAGE ----------------
+const buildRawMaterialData = () => ({
+  materials,
+  sop: { ...sop }, // pass all SOP fields
+});
 
-    // ---------------- BUILD DATA FOR NEXT PAGE ----------------
-  const rawMaterialData = {
-    materials,
-    sop: {
-      objective: sop.objective,
-      scope: sop.scope,
-      responsibilities: sop.responsibilities,
-      frequency: sop.frequency,
-      purchase: sop.purchase,
-      receipt: sop.receipt,
-      storage: sop.storage,
-      record: sop.record,
-      implementation_date: sop.implementation_date,
-      reference_no: sop.reference_no,
-      review_no: sop.review_no,
-    },
-  };
-
-  const handleSaveBtn = async () => {
+// ---------------- NAVIGATION HANDLERS ----------------
+const handleSaveBtn = async () => {
   await saveAll();
+  const rawMaterialData = buildRawMaterialData();
 
-    navigate("/rawmaterialsummary", {
-      state: { userId, companyInfoId, rawMaterialData },});
-  };
+  navigate("/rawmaterialsummary", {
+    state: { userId, companyInfoId, rawMaterialData },
+  });
+};
 
-    const handleNextBtn = () => {
-    navigate("/rawmaterialsummary", {
-      state: { userId, companyInfoId, rawMaterialData },})
-  };
-  const handleBackBtn = () => {
-    navigate("/productlist", { state: { userId, companyInfoId } });
-  };
+const handleNextBtn = () => {
+  const rawMaterialData = buildRawMaterialData();
+
+  navigate("/rawmaterialsummary", {
+    state: { userId, companyInfoId, rawMaterialData },
+  });
+};
+
+const handleBackBtn = () => {
+  navigate("/productlist", { state: { userId, companyInfoId } });
+};
+
 
   return (
     <div className="min-h-screen flex bg-[#f4f8ff] font-poppins text-black flex-col">
