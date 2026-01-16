@@ -9,9 +9,6 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 
-const safe = (v) => (v ? v : "[-]");
-const pickOne = (arr) => (Array.isArray(arr) && arr.length > 0 ? arr[0] : null);
-
 const styles = StyleSheet.create({
   page: {flexDirection: "column",backgroundColor: "#ffffff",fontFamily: "Helvetica",paddingTop: 60,paddingBottom: 60,paddingHorizontal: 50,},
 
@@ -31,6 +28,8 @@ const styles = StyleSheet.create({
   bottomRight: {width: "21.5%",justifyContent: "center",paddingVertical: 5,paddingHorizontal: 8,},
   pageNoText: { fontSize: 9, textAlign: "left" },
   labelText: { fontSize: 9, fontWeight: "bold", flexWrap: "wrap" },
+  logoPlaceholder: {fontSize: 9,color: "#999",textAlign: "center",},
+  documentNameText: { fontSize: 9, fontWeight: "bold" },
 
     // ================= Title Pages =================
   title: { textAlign: "center", fontSize: 20, fontWeight: "bold", marginBottom: 40, letterSpacing: 0.6 },
@@ -46,10 +45,11 @@ const styles = StyleSheet.create({
   companyInfo: { textAlign: "center", fontSize: 13, fontWeight: "bold", lineHeight: 1.8, marginBottom: 100 },
   textAlign: { textAlign: "center", fontSize: 12, color: "#999", marginBottom: 40 },
   //table 
-  coverCol: { width: "100%", borderWidth: 1, borderColor: "#000", padding: 12 },
+
   coverHeader: { fontSize: 12, fontWeight: "bold", marginTop: 14, marginBottom: 4, borderTopWidth: 1, borderTopColor: "#000", paddingTop: 6, textTransform: "uppercase" },
   coverCell: { fontSize: 10, marginBottom: 3 },
-
+  coverRow: {flexDirection: "row",width: "100%",marginTop: 30,},
+  coverCol: {width: "50%",borderWidth: 1,borderColor: "#000",padding: 10,},
   // ================= TOC =================
   tocMainTitle: { fontSize: 14, fontWeight: "bold", textAlign: "center", marginBottom: 12 },
   tocTable: { display: "table", width: "100%", borderWidth: 1, borderColor: "#000" },
@@ -87,11 +87,13 @@ colProduct: { width: "30%", borderRightWidth: 1, borderColor: "#000" },
 colIngredients: { width: "60%", borderRightWidth: 0 },
 
 // ================= RAW MATERIAL MASTER TABLE =================
-rmMasterTable:{display:"table",width:"100%",borderStyle:"solid",borderWidth:1,borderColor:"#000",marginTop:10},
-rmMasterHeaderRow:{flexDirection:"row",backgroundColor:"#e6e6e6",borderBottom:"1px solid #000"},
-rmMasterRow:{flexDirection:"row",borderBottom:"1px solid #000"},
-rmMasterHeaderCell:{padding:4,fontSize:8,fontFamily:"Helvetica-Bold",borderRight:"1px solid #000",textAlign:"left",flexShrink:0,flexWrap:"wrap"},
-rmMasterCell:{padding:4,fontSize:8,borderRight:"1px solid #000",textAlign:"left",flexShrink:0,flexWrap:"wrap"},
+rmMasterTable:{display:"table",width:"100%",borderWidth:1,borderColor:"#000",marginTop:10},
+rmMasterHeaderRow:{flexDirection:"row",backgroundColor:"#e6e6e6",borderBottomWidth:1,borderBottomColor:"#000"},
+rmMasterRow:{flexDirection:"row",borderBottomWidth:1,borderBottomColor:"#000"},
+rmMasterHeaderCell:{padding:4,fontSize:8,fontFamily:"Helvetica-Bold",borderRightWidth:1,borderRightColor:"#000",textAlign:"left",flexShrink:0,flexWrap:"wrap"},
+rmMasterCell:{padding:4,fontSize:8,borderRightWidth:1,borderRightColor:"#000",textAlign:"left",flexShrink:0,flexWrap:"wrap"},
+sectionSubTitle:{fontSize:13,fontWeight:"bold",textAlign:"center",marginBottom:14},
+landscapePage:{paddingTop:60,paddingBottom:60,paddingHorizontal:30},
 
 // Adjusted column widths
   colMaterialName: { width: "20%" },
@@ -104,23 +106,23 @@ rmMasterCell:{padding:4,fontSize:8,borderRight:"1px solid #000",textAlign:"left"
   sopTitle: { fontSize: 11, fontWeight: "bold", marginTop: 6 },
   sopInput: { fontSize: 10, marginBottom: 4 },
 
-  // ================= RAW MATERIAL SUMMARY =================
+// ================= RAW MATERIAL SUMMARY =================
   rawSummaryTable:{display:"table",width:"100%",borderWidth:1,borderColor:"#000",marginTop:10},
-  rawSummaryTableHeader:{flexDirection:"row",backgroundColor:"#e6e6e6",borderBottom:"1px solid #000"},
-  rawSummaryRow:{flexDirection:"row",borderBottom:"1px solid #000"},
-  rawSummaryHeaderCell:{padding:4,fontSize:8,fontFamily:"Helvetica-Bold",borderRight:"1px solid #000",textAlign:"left"},
-  rawSummaryCell:{padding:3,fontSize:7,borderRight:"1px solid #000",textAlign:"left"},
+  rawSummaryTableHeader:{flexDirection:"row",backgroundColor:"#e6e6e6",borderBottomWidth:1,borderBottomColor:"#000"},
+  rawSummaryRow:{flexDirection:"row",borderBottomWidth:1,borderBottomColor:"#000"},
+  rawSummaryHeaderCell:{padding:4,fontSize:8,fontFamily:"Helvetica-Bold",borderRightWidth:1,borderRightColor:"#000",textAlign:"left"},
+  rawSummaryCell:{padding:3,fontSize:7,borderRightWidth:1,borderRightColor:"#000",textAlign:"left"},
+
 
   // ================= RAW MATERIAL SUMMARY COLUMNS =================
   rmSummaryColNo:{width:"8%",textAlign:"center"},
   rmSummaryColMaterial:{width:"30%"},
   rmSummaryColSupplier:{width:"25%"},
   rmSummaryColCert:{width:"18%"},
-  rmSummaryColExpiry:{width:"19%",borderRight:0},
+  rmSummaryColExpiry:{width:"19%",borderRightWidth:0},
 
 // ================= TRACEABILITY =================
-  referenceTitle:{fontSize:14,fontFamily:"Helvetica-Bold",textAlign:"center",marginVertical:12,textTransform:"uppercase"},
-  traceImageLarge:{width:"100%",height:380,marginTop:10,borderWidth:1,borderColor:"#000",objectFit:"contain"},
+  traceImageLarge: {width: "100%",height: 380,marginTop: 10,objectFit: "contain",},
 
   // ================= IMAGES =================
   mapImage: { width: "100%", height: 200, marginTop: 6, borderWidth: 1, borderColor: "#000" },
@@ -128,7 +130,7 @@ rmMasterCell:{padding:4,fontSize:8,borderRight:"1px solid #000",textAlign:"left"
 });
 
 
-const IHCSReport = ({ allData = {}, meta = {} }) => {
+const IHCSReport = ({ allData = {} }) => {
   // ======= pull safe objects =======
   const info = allData.company_info?.[0] || {};
   const background = allData.company_background?.[0] || {};
@@ -230,7 +232,6 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
   // ======= RETURN DOCUMENT =======
   return (
     <Document>
-  // ======= cover page  =======
 {/* Cover */}
 <Page size="A4" style={styles.page}>
   <Text style={styles.title}>INTERNAL HALAL CONTROL SYSTEM (IHCS)</Text>
@@ -247,23 +248,32 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
     <Text>{info.address || "COMPANY ADDRESS"}</Text>
   </View>
 
-  {/* Table */}
+  {/* Prepared / Approved Table */}
+  <View style={styles.coverRow}>
     {/* Prepared By */}
     <View style={styles.coverCol}>
       <Text style={styles.coverHeader}>Prepared By</Text>
       <Text style={styles.coverCell}>Name: {info.prepared_by_name || ""}</Text>
       <Text style={styles.coverCell}>Position: {info.prepared_by_position || ""}</Text>
       <Text style={styles.coverCell}>
-        Date: {info.prepared_date ? new Date(info.prepared_date).toLocaleDateString() : ""}
+        Date: {info.prepared_date
+          ? new Date(info.prepared_date).toLocaleDateString()
+          : ""}
       </Text>
+    </View>
+
     {/* Approved By */}
+    <View style={styles.coverCol}>
       <Text style={styles.coverHeader}>Approved By</Text>
       <Text style={styles.coverCell}>Name: {info.approved_by_name || ""}</Text>
       <Text style={styles.coverCell}>Position: {info.approved_by_position || ""}</Text>
       <Text style={styles.coverCell}>
-        Date: {info.approved_date ? new Date(info.approved_date).toLocaleDateString() : ""}
+        Date: {info.approved_date
+          ? new Date(info.approved_date).toLocaleDateString()
+          : ""}
       </Text>
     </View>
+  </View>
 </Page>
 
 
@@ -425,7 +435,7 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
 
               {halalPolicy?.policy_points?.map((point, idx) => (
                 <Text key={idx} style={styles.paragraph}>
-                  {toRoman(idx)}. {point}
+                  {idx + 1}. {point}
                 </Text>
               ))}
             </>
@@ -524,7 +534,7 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
         </Page>
 
         {/* RAW MATERIAL MASTER TABLE (LANDSCAPE) */}
-        <Page size="A4" orientation="landscape" style={styles.page}>
+        <Page size="A4" orientation="landscape" style={[styles.page, styles.landscapePage]}>
           {renderHeader(14, rawMaterialMasterHeader)}
           <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
 
@@ -616,44 +626,33 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
 
           <Text style={styles.sectionMainTitle}>RAW MATERIAL SUMMARY</Text>
 
-          {/* TABLE HEADER */}
-          <View style={styles.rawSummaryTableHeader}>
-            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColNo]}>No.</Text>
-            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColMaterial]}>Material Name</Text>
-            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColSupplier]}>Supplier</Text>
-            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColCert]}>Cert No.</Text>
-            <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColExpiry]}>Expiry Date</Text>
+          <View style={styles.rawSummaryTable}>
+            {/* TABLE HEADER */}
+            <View style={styles.rawSummaryTableHeader}>
+              <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColNo]}>No.</Text>
+              <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColMaterial]}>Material Name</Text>
+              <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColSupplier]}>Supplier</Text>
+              <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColCert]}>Cert No.</Text>
+              <Text style={[styles.rawSummaryHeaderCell, styles.rmSummaryColExpiry]}>Expiry Date</Text>
+            </View>
+
+            {/* TABLE BODY */}
+            {rawMaterialSummary.length > 0 ? (
+              rawMaterialSummary.map((item, idx) => (
+                <View key={item?.id || idx} style={styles.rawSummaryRow}>
+                  <Text style={[styles.rawSummaryCell, styles.rmSummaryColNo]}>{idx + 1}</Text>
+                  <Text style={[styles.rawSummaryCell, styles.rmSummaryColMaterial]}>{item.material_name || "N/A"}</Text>
+                  <Text style={[styles.rawSummaryCell, styles.rmSummaryColSupplier]}>{item.supplier || "N/A"}</Text>
+                  <Text style={[styles.rawSummaryCell, styles.rmSummaryColCert]}>{item.cert_no || "N/A"}</Text>
+                  <Text style={[styles.rawSummaryCell, styles.rmSummaryColExpiry]}>{item.expiry_date || "N/A"}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.paragraph}>No raw material summary data available.</Text>
+            )}
           </View>
-
-          {/* TABLE BODY */}
-          {rawMaterialSummary.length > 0 ? (
-            rawMaterialSummary.map((item, idx) => (
-              <View key={item?.id || idx} style={styles.rawSummaryRow}>
-                <Text style={[styles.rawSummaryCell, styles.rmSummaryColNo]}>
-                  {idx + 1}
-                </Text>
-
-                <Text style={[styles.rawSummaryCell, styles.rmSummaryColMaterial]}>
-                  {item.material_name || "N/A"}
-                </Text>
-
-                <Text style={[styles.rawSummaryCell, styles.rmSummaryColSupplier]}>
-                  {item.supplier || "N/A"}
-                </Text>
-
-                <Text style={[styles.rawSummaryCell, styles.rmSummaryColCert]}>
-                  {item.cert_no || "N/A"}
-                </Text>
-
-                <Text style={[styles.rawSummaryCell, styles.rmSummaryColExpiry]}>
-                  {item.expiry_date || "N/A"}
-                </Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.paragraph}>No raw material summary data available.</Text>
-          )}
         </Page>
+
 
       {/* PRODUCT FLOW CHART RAW — TITLE PAGE */}
         <Page size="A4" style={styles.page}>
@@ -737,57 +736,44 @@ const IHCSReport = ({ allData = {}, meta = {} }) => {
 
       {/* TRACEABILITY — REFERENCE 1 */}
       {traceability.length > 0 &&
-        traceability.map((item, idx) => {
-          const currentHeader = {
-            implementation_date: item?.implementation_date
-              ? new Date(item.implementation_date).toLocaleDateString("en-GB")
-              : "No value",
-            reference_no: item?.reference_no || "No value",
-            review_no: item?.review_no || "No value",
-            document_name: "IHCS/HAS",
-          };
-
-          return (
+        traceability
+          .filter(item => item?.file1_url)
+          .map((item, idx) => (
             <Page key={`trace-ref1-${idx}`} size="A4" style={styles.page}>
-              {renderHeader(25, currentHeader)}
+              {renderHeader(25 + idx, item)}
+
               <Text style={styles.sectionMainTitle}>REFERENCE 1</Text>
 
-              {item?.file1_url ? (
-                <Image style={styles.traceImageLarge} src={item.file1_url} />
-              ) : (
-                <Text style={styles.paragraph}>No Reference 1 file provided.</Text>
-              )}
+              <Image
+                style={styles.traceImageLarge}
+                src={item.file1_url}
+              />
             </Page>
-          );
-        })
+          ))
       }
 
       {/* TRACEABILITY — REFERENCE 2 */}
       {traceability.length > 0 &&
-        traceability.map((item, idx) => {
-          const currentHeader = {
-            implementation_date: item?.implementation_date
-              ? new Date(item.implementation_date).toLocaleDateString("en-GB")
-              : "No value",
-            reference_no: item?.reference_no || "No value",
-            review_no: item?.review_no || "No value",
-            document_name: "IHCS/HAS",
-          };
+        traceability
+          .filter(item => item?.file2_url)
+          .map((item, idx) => (
+            <Page
+              key={`trace-ref2-${idx}`}
+              size="A4"
+              style={styles.page}
+            >
+              {renderHeader(25 + traceability.length + idx, item)}
 
-          return (
-            <Page key={`trace-ref2-${idx}`} size="A4" style={styles.page}>
-              {renderHeader(26, currentHeader)}
               <Text style={styles.sectionMainTitle}>REFERENCE 2</Text>
 
-              {item?.file2_url ? (
-                <Image style={styles.traceImageLarge} src={item.file2_url} />
-              ) : (
-                <Text style={styles.paragraph}>No Reference 2 file provided.</Text>
-              )}
+              <Image
+                style={styles.traceImageLarge}
+                src={item.file2_url}
+              />
             </Page>
-          );
-        })
+          ))
       }
+
           </Document>
         );
       };
