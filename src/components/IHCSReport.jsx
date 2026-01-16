@@ -131,39 +131,49 @@ landscapePage:{paddingTop:60,paddingBottom:60,paddingHorizontal:30},
 
 
 const IHCSReport = ({ allData = {} }) => {
-  // ======= pull safe objects =======
+  // ======= Debug SOP data =======
+  console.log("raw_material_sop from allData:", allData.raw_material_sop);
+
+  // ======= Pull safe objects =======
   const info = allData.company_info?.[0] || {};
   const background = allData.company_background?.[0] || {};
   const orgChart = allData.organisation_chart?.[0] || {};
   const halalPolicy = allData.halal_policy?.[0] || {};
-  const productList = allData.product_list || [];
-  const rawMaterialMaster = allData.raw_material_master || [];
-  const rawMaterialSummary = allData.raw_material_summary || [];
+  const productList = Array.isArray(allData.product_list) ? allData.product_list : [];
+  const rawMaterialMaster = Array.isArray(allData.raw_material_master) ? allData.raw_material_master : [];
+
+  // ======= SOP SAFE PULL =======
+  // Ensure we safely get the first SOP record or null if missing
+  const rawMaterialMasterSop = Array.isArray(allData.raw_material_sop)
+    ? allData.raw_material_sop[0] || null
+    : null;
+
+  const rawMaterialSummary = Array.isArray(allData.raw_material_summary) ? allData.raw_material_summary : [];
   const productFlowRaw = allData.product_flow_chart_raw?.[0] || {};
   const productFlowProcess = allData.product_flow_process?.[0] || {};
   const premise = allData.premise_plan?.[0] || {};
-  const traceability = allData.traceability || [];
+  const traceability = Array.isArray(allData.traceability) ? allData.traceability : [];
 
   // ======= Section-specific headers =======
   const companyBackgroundHeader = background;
   const organisationChartHeader = orgChart;
   const halalPolicyHeader = halalPolicy;
-  const productListHeader = productList?.[0] || {};
-  const rawMaterialMasterHeader = rawMaterialMaster?.[0] || {};
-  const rawMaterialSummaryHeader = rawMaterialSummary?.[0] || {};
-  const productFlowRawHeader = productFlowRaw || {};
-  const productFlowProcessHeader = productFlowProcess || {};
-  const premisePlanHeader = premise || {};
-  const traceabilityHeader = traceability?.[0] || {};
+  const productListHeader = productList[0] || {};
+  const rawMaterialMasterHeader = rawMaterialMaster[0] || {};
+  const rawMaterialSummaryHeader = rawMaterialSummary[0] || {};
+  const productFlowRawHeader = productFlowRaw;
+  const productFlowProcessHeader = productFlowProcess;
+  const premisePlanHeader = premise;
+  const traceabilityHeader = traceability[0] || {};
 
-  // ======= TOTAL STAFF SAFE CALCULATION =======
+  // ======= Total Staff Calculation =======
   const totalStaff =
     (organisationChartHeader?.directors || 0) +
     (organisationChartHeader?.managers || 0) +
     (organisationChartHeader?.supervisors || 0) +
     (organisationChartHeader?.employees || 0);
 
-  // ======= FIXED HEADER RENDERER =======
+  // ======= Fixed Header Renderer =======
   const renderHeader = (pageNumber, header = {}) => {
     const safeHeader = {
       implementation_date: header?.implementation_date
@@ -178,7 +188,6 @@ const IHCSReport = ({ allData = {} }) => {
       company_logo_url: info?.company_logo_url || null,
       company_name: info?.company_name || "COMPANY NAME",
     };
-
     return (
       <View style={styles.headerTable} wrap={false}>
         <View style={styles.headerRow}>
@@ -228,7 +237,6 @@ const IHCSReport = ({ allData = {} }) => {
       </View>
     );
   };
-
   // ======= RETURN DOCUMENT =======
   return (
     <Document>
@@ -526,6 +534,7 @@ const IHCSReport = ({ allData = {} }) => {
             </View>
           ))}
         </Page>
+        {/* ================= RAW MATERIAL SECTION ================= */}
 
         {/* RAW MATERIAL TITLE PAGE */}
         <Page size="A4" style={styles.page}>
@@ -556,9 +565,7 @@ const IHCSReport = ({ allData = {} }) => {
                   <Text style={[styles.rmMasterCell, styles.colScientificName]}>{item?.scientific_trade_name || "N/A"}</Text>
                   <Text style={[styles.rmMasterCell, styles.colSource]}>{item?.source_of_raw_material || "N/A"}</Text>
                   <Text style={[styles.rmMasterCell, styles.colManufacturer]}>{item?.manufacturer_name_address || "N/A"}</Text>
-                  <Text style={[styles.rmMasterCell, styles.colDeclaration]}>
-                    {item?.material_declaration_authorities ? "Yes" : "No"}
-                  </Text>
+                  <Text style={[styles.rmMasterCell, styles.colDeclaration]}>{item?.material_declaration_authorities ? "Yes" : "No"}</Text>
                   <Text style={[styles.rmMasterCell, styles.colHalalBody]}>{item?.halal_cert_body || "N/A"}</Text>
                   <Text style={[styles.rmMasterCell, styles.colExpiry]}>{item?.halal_cert_expiry || "N/A"}</Text>
                 </View>
@@ -569,48 +576,55 @@ const IHCSReport = ({ allData = {} }) => {
           </View>
         </Page>
 
-
         {/* RAW MATERIAL MASTER - SOP SECTION */}
-        <Page size="A4" style={styles.page}>
-          {renderHeader(15, rawMaterialMasterHeader)}
+{/* RAW MATERIAL MASTER - SOP SECTION */}
+<Page size="A4" style={styles.page}>
+  {renderHeader(15, rawMaterialMasterHeader)}
 
-          <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
-          <Text style={styles.sectionSubTitle}>SOP – RAW MATERIAL</Text>
+  <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
+  <Text style={styles.sectionSubTitle}>SOP – RAW MATERIAL</Text>
 
-          {rawMaterialMaster?.length > 0 ? (
-            rawMaterialMaster.map((item, idx) => (
-              <View key={item?.id || idx} style={{ marginBottom: 14 }}>
+  <View style={{ marginBottom: 14 }}>
+    {/* Helper function to safely render SOP fields */}
+    {[
+      { label: "Objective", field: "objective" },
+      { label: "Scope", field: "scope" },
+      { label: "Responsibilities", field: "responsibilities" },
+      { label: "Frequency", field: "frequency" },
+      { label: "Purchase", field: "purchase" },
+      { label: "Receipt", field: "receipt" },
+      { label: "Storage", field: "storage" },
+      { label: "Record", field: "record" },
+    ].map(({ label, field }) => (
+      <React.Fragment key={field}>
+        <Text style={styles.sopTitle}>{label}</Text>
+        <Text style={styles.sopInput}>
+          {rawMaterialMasterSop?.[field]?.trim()
+            ? rawMaterialMasterSop[field]
+            : "N/A"}
+        </Text>
+      </React.Fragment>
+    ))}
 
-                <Text style={styles.sopTitle}>Objective</Text>
-                <Text style={styles.sopInput}>{item?.objective || "N/A"}</Text>
+    {/* Optional: Implementation, Reference, Review */}
+    <Text style={styles.sopTitle}>Implementation Date</Text>
+    <Text style={styles.sopInput}>
+      {rawMaterialMasterSop?.implementation_date
+        ? new Date(rawMaterialMasterSop.implementation_date).toLocaleDateString("en-GB")
+        : "N/A"}
+    </Text>
 
-                <Text style={styles.sopTitle}>Scope</Text>
-                <Text style={styles.sopInput}>{item?.scope || "N/A"}</Text>
+    <Text style={styles.sopTitle}>Reference No</Text>
+    <Text style={styles.sopInput}>
+      {rawMaterialMasterSop?.reference_no || "N/A"}
+    </Text>
 
-                <Text style={styles.sopTitle}>Responsibilities</Text>
-                <Text style={styles.sopInput}>{item?.responsibilities || "N/A"}</Text>
-
-                <Text style={styles.sopTitle}>Frequency</Text>
-                <Text style={styles.sopInput}>{item?.frequency || "N/A"}</Text>
-
-                <Text style={styles.sopTitle}>Purchase</Text>
-                <Text style={styles.sopInput}>{item?.purchase || "N/A"}</Text>
-
-                <Text style={styles.sopTitle}>Receipt</Text>
-                <Text style={styles.sopInput}>{item?.receipt || "N/A"}</Text>
-
-                <Text style={styles.sopTitle}>Storage</Text>
-                <Text style={styles.sopInput}>{item?.storage || "N/A"}</Text>
-
-                <Text style={styles.sopTitle}>Record</Text>
-                <Text style={styles.sopInput}>{item?.record || "N/A"}</Text>
-
-              </View>
-            ))
-          ) : (
-            <Text style={styles.paragraph}>No SOP data available.</Text>
-          )}
-        </Page>
+    <Text style={styles.sopTitle}>Review No</Text>
+    <Text style={styles.sopInput}>
+      {rawMaterialMasterSop?.review_no || "N/A"}
+    </Text>
+  </View>
+</Page>
 
 
         {/* RAW MATERIAL SUMMARY — TITLE PAGE */}
