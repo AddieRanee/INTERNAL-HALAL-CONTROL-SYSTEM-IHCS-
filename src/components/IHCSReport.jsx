@@ -166,6 +166,68 @@ const IHCSReport = ({ allData = {} }) => {
   const premisePlanHeader = premise;
   const traceabilityHeader = traceability[0] || {};
 
+  // ================= FETCH ALL IHCS DATA =================
+const fetchIHCSData = async () => {
+  if (!companyInfoId) return;
+
+  try {
+    const [
+      companyInfoRes,
+      companyBackgroundRes,
+      organisationChartRes,
+      halalPolicyRes,
+      productListRes,
+      rawMaterialMasterRes,
+      rawMaterialSopRes,
+      rawMaterialSummaryRes,
+      productFlowRawRes,
+      productFlowProcessRes,
+      premisePlanRes,
+      traceabilityRes,
+    ] = await Promise.all([
+      supabase.from("company_info").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("company_background").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("organisation_chart").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("halal_policy").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("product_list").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("raw_material_master").select("*").eq("company_info_id", companyInfoId),
+
+      // ⭐ THIS IS THE IMPORTANT SOP FETCH ⭐
+      supabase.from("raw_material_sop").select("*").eq("company_info_id", companyInfoId),
+
+      supabase.from("raw_material_summary").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("product_flow_chart_raw").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("product_flow_process").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("premise_plan").select("*").eq("company_info_id", companyInfoId),
+      supabase.from("traceability").select("*").eq("company_info_id", companyInfoId),
+    ]);
+
+    const allData = {
+      company_info: companyInfoRes.data || [],
+      company_background: companyBackgroundRes.data || [],
+      organisation_chart: organisationChartRes.data || [],
+      halal_policy: halalPolicyRes.data || [],
+      product_list: productListRes.data || [],
+      raw_material_master: rawMaterialMasterRes.data || [],
+
+      // ⭐ MUST BE AN ARRAY ⭐
+      raw_material_sop: rawMaterialSopRes.data || [],
+
+      raw_material_summary: rawMaterialSummaryRes.data || [],
+      product_flow_chart_raw: productFlowRawRes.data || [],
+      product_flow_process: productFlowProcessRes.data || [],
+      premise_plan: premisePlanRes.data || [],
+      traceability: traceabilityRes.data || [],
+    };
+
+    console.log("✅ IHCS allData:", allData);
+    setAllData(allData);
+
+  } catch (err) {
+    console.error("❌ Error fetching IHCS data:", err);
+  }
+};
+
   // ======= Total Staff Calculation =======
   const totalStaff =
     (organisationChartHeader?.directors || 0) +
@@ -585,7 +647,6 @@ const IHCSReport = ({ allData = {} }) => {
   <Text style={styles.sectionSubTitle}>SOP – RAW MATERIAL</Text>
 
   <View style={{ marginBottom: 14 }}>
-    {/* Helper function to safely render SOP fields */}
     {[
       { label: "Objective", field: "objective" },
       { label: "Scope", field: "scope" },
@@ -595,18 +656,20 @@ const IHCSReport = ({ allData = {} }) => {
       { label: "Receipt", field: "receipt" },
       { label: "Storage", field: "storage" },
       { label: "Record", field: "record" },
-    ].map(({ label, field }) => (
-      <React.Fragment key={field}>
-        <Text style={styles.sopTitle}>{label}</Text>
-        <Text style={styles.sopInput}>
-          {rawMaterialMasterSop?.[field]?.trim()
-            ? rawMaterialMasterSop[field]
-            : "N/A"}
-        </Text>
-      </React.Fragment>
-    ))}
+    ].map(({ label, field }) => {
+      const value = rawMaterialMasterSop?.[field];
 
-    {/* Optional: Implementation, Reference, Review */}
+      return (
+        <React.Fragment key={field}>
+          <Text style={styles.sopTitle}>{label}</Text>
+          <Text style={styles.sopInput}>
+            {typeof value === "string" && value.trim() !== "" ? value : "N/A"}
+          </Text>
+        </React.Fragment>
+      );
+    })}
+
+    {/* Implementation Date */}
     <Text style={styles.sopTitle}>Implementation Date</Text>
     <Text style={styles.sopInput}>
       {rawMaterialMasterSop?.implementation_date
@@ -614,18 +677,19 @@ const IHCSReport = ({ allData = {} }) => {
         : "N/A"}
     </Text>
 
+    {/* Reference No */}
     <Text style={styles.sopTitle}>Reference No</Text>
     <Text style={styles.sopInput}>
-      {rawMaterialMasterSop?.reference_no || "N/A"}
+      {rawMaterialMasterSop?.reference_no?.trim() || "N/A"}
     </Text>
 
+    {/* Review No */}
     <Text style={styles.sopTitle}>Review No</Text>
     <Text style={styles.sopInput}>
-      {rawMaterialMasterSop?.review_no || "N/A"}
+      {rawMaterialMasterSop?.review_no?.trim() || "N/A"}
     </Text>
   </View>
 </Page>
-
 
         {/* RAW MATERIAL SUMMARY — TITLE PAGE */}
         <Page size="A4" style={styles.page}>
