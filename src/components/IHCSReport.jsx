@@ -848,8 +848,7 @@ const fetchIHCSData = async () => {
             </Page>
           ))
       }
-
-          </Document>
+    </Document>
         );
       };
 
