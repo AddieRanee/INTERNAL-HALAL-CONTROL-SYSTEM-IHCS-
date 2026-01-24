@@ -169,7 +169,6 @@ export default function Traceability({ companyInfoId, companyId }) {
       "product_flow_process",
       "premise_plan",
       "traceability",
-      "profiles",
     ];
 
     const result = {};
