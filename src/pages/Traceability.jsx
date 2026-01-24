@@ -163,6 +163,7 @@ export default function Traceability({ companyInfoId, companyId }) {
       "halal_policy",
       "product_list",
       "raw_material_master",
+      "raw_material_sop",
       "raw_material_summary",
       "product_flow_chart_raw",
       "product_flow_process",
