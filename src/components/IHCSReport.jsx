@@ -47,9 +47,15 @@ const styles = StyleSheet.create({
   //table 
 
   coverHeader: { fontSize: 12, fontWeight: "bold", marginTop: 14, marginBottom: 4, borderTopWidth: 1, borderTopColor: "#000", paddingTop: 6, textTransform: "uppercase" },
-  coverCell: { fontSize: 10, marginBottom: 3 },
-  coverRow: {flexDirection: "row",width: "100%",marginTop: 30,},
-  coverCol: {width: "50%",borderWidth: 1,borderColor: "#000",padding: 10,},
+  coverCell: { fontSize: 10, marginBottom: 4 },
+  coverRow: { flexDirection: "row" },
+  coverCol: { width: "50%", padding: 8, borderRightWidth: 1, borderRightColor: "#000" },
+  coverTitleRow: { flexDirection: "row", marginTop: 30, marginBottom: 6 },
+  coverTableTitle: { width: "50%", textAlign: "center", fontSize: 11, fontWeight: "bold", paddingVertical: 6, borderRightWidth: 1, borderRightColor: "#000" },
+  coverColLast: { width: "50%", padding: 8 },
+  coverTable: { borderWidth: 1, borderColor: "#000", marginTop: 30 },
+  coverTitleRowBordered: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "#000" },
+
   // ================= TOC =================
   tocMainTitle: { fontSize: 14, fontWeight: "bold", textAlign: "center", marginBottom: 12 },
   tocTable: { display: "table", width: "100%", borderWidth: 1, borderColor: "#000" },
@@ -105,6 +111,8 @@ landscapePage:{paddingTop:60,paddingBottom:60,paddingHorizontal:30},
   colExpiry: { width: "9%", textAlign: "center" },
   sopTitle: { fontSize: 11, fontWeight: "bold", marginTop: 6 },
   sopInput: { fontSize: 10, marginBottom: 4 },
+  page: { flexDirection: "column", backgroundColor: "#ffffff", fontFamily: "Helvetica", paddingTop: 20, paddingBottom: 30, paddingHorizontal: 50 },
+  headerTable: { borderWidth: 1, borderColor: "#000", marginBottom: 12, width: "100%" },  
 
 // ================= RAW MATERIAL SUMMARY =================
   rawSummaryTable:{display:"table",width:"100%",borderWidth:1,borderColor:"#000",marginTop:10},
@@ -144,9 +152,9 @@ const IHCSReport = ({ allData = {} }) => {
 
   // ======= SOP SAFE PULL =======
   // Ensure we safely get the first SOP record or null if missing
-  const rawMaterialMasterSop = Array.isArray(allData.raw_material_sop)
-    ? allData.raw_material_sop[0] || null
-    : null;
+const rawMaterialMasterSop = Array.isArray(allData.raw_material_sop)
+  ? allData.raw_material_sop[0] || null
+  : null;
 
   const rawMaterialSummary = Array.isArray(allData.raw_material_summary) ? allData.raw_material_summary : [];
   const productFlowRaw = allData.product_flow_chart_raw?.[0] || {};
@@ -318,34 +326,38 @@ const fetchIHCSData = async () => {
     <Text>{info.address || "COMPANY ADDRESS"}</Text>
   </View>
 
-  {/* Prepared / Approved Table */}
-  <View style={styles.coverRow}>
-    {/* Prepared By */}
-    <View style={styles.coverCol}>
-      <Text style={styles.coverHeader}>Prepared By</Text>
-      <Text style={styles.coverCell}>Name: {info.prepared_by_name || ""}</Text>
-      <Text style={styles.coverCell}>Position: {info.prepared_by_position || ""}</Text>
-      <Text style={styles.coverCell}>
-        Date: {info.prepared_date
-          ? new Date(info.prepared_date).toLocaleDateString()
-          : ""}
-      </Text>
+  {/* ===== PREPARED / APPROVED TABLE ===== */}
+  <View style={styles.coverTable}>
+
+    {/* TITLE ROW (WITH TOP LINE) */}
+    <View style={styles.coverTitleRowBordered}>
+      <Text style={styles.coverTableTitle}>Prepared By</Text>
+      <Text style={styles.coverTableTitle}>Approved By</Text>
     </View>
 
-    {/* Approved By */}
-    <View style={styles.coverCol}>
-      <Text style={styles.coverHeader}>Approved By</Text>
-      <Text style={styles.coverCell}>Name: {info.approved_by_name || ""}</Text>
-      <Text style={styles.coverCell}>Position: {info.approved_by_position || ""}</Text>
-      <Text style={styles.coverCell}>
-        Date: {info.approved_date
-          ? new Date(info.approved_date).toLocaleDateString()
-          : ""}
-      </Text>
+    {/* TABLE BODY */}
+    <View style={styles.coverRow}>
+      {/* Prepared By */}
+      <View style={styles.coverCol}>
+        <Text style={styles.coverCell}>Name: {info.prepared_by_name || ""}</Text>
+        <Text style={styles.coverCell}>Position: {info.prepared_by_position || ""}</Text>
+        <Text style={styles.coverCell}>
+          Date: {info.prepared_date ? new Date(info.prepared_date).toLocaleDateString("en-GB") : ""}
+        </Text>
+      </View>
+
+      {/* Approved By */}
+      <View style={styles.coverColLast}>
+        <Text style={styles.coverCell}>Name: {info.approved_by_name || ""}</Text>
+        <Text style={styles.coverCell}>Position: {info.approved_by_position || ""}</Text>
+        <Text style={styles.coverCell}>
+          Date: {info.approved_date ? new Date(info.approved_date).toLocaleDateString("en-GB") : ""}
+        </Text>
+      </View>
     </View>
+
   </View>
 </Page>
-
 
 {/* TABLE OF CONTENTS */}
 <Page size="A4" style={styles.page}>
@@ -640,13 +652,14 @@ const fetchIHCSData = async () => {
 
         {/* RAW MATERIAL MASTER - SOP SECTION */}
 {/* RAW MATERIAL MASTER - SOP SECTION */}
-<Page size="A4" style={styles.page}>
-  {renderHeader(15, rawMaterialMasterHeader)}
+<Page size="A4" style={styles.page} wrap>
+  {/* ✅ SAFE HEADER (SOP OR FALLBACK) */}
+  {renderHeader(15, rawMaterialMasterSop || {})}
 
   <Text style={styles.sectionMainTitle}>RAW MATERIAL MASTER</Text>
   <Text style={styles.sectionSubTitle}>SOP – RAW MATERIAL</Text>
 
-  <View style={{ marginBottom: 14 }}>
+  <View style={{ marginBottom: 14 }} wrap>
     {[
       { label: "Objective", field: "objective" },
       { label: "Scope", field: "scope" },
@@ -663,33 +676,17 @@ const fetchIHCSData = async () => {
         <React.Fragment key={field}>
           <Text style={styles.sopTitle}>{label}</Text>
           <Text style={styles.sopInput}>
-            {typeof value === "string" && value.trim() !== "" ? value : "N/A"}
+            {typeof value === "string" && value.trim() !== ""
+              ? value
+              : "N/A"}
           </Text>
         </React.Fragment>
       );
     })}
-
-    {/* Implementation Date */}
-    <Text style={styles.sopTitle}>Implementation Date</Text>
-    <Text style={styles.sopInput}>
-      {rawMaterialMasterSop?.implementation_date
-        ? new Date(rawMaterialMasterSop.implementation_date).toLocaleDateString("en-GB")
-        : "N/A"}
-    </Text>
-
-    {/* Reference No */}
-    <Text style={styles.sopTitle}>Reference No</Text>
-    <Text style={styles.sopInput}>
-      {rawMaterialMasterSop?.reference_no?.trim() || "N/A"}
-    </Text>
-
-    {/* Review No */}
-    <Text style={styles.sopTitle}>Review No</Text>
-    <Text style={styles.sopInput}>
-      {rawMaterialMasterSop?.review_no?.trim() || "N/A"}
-    </Text>
   </View>
 </Page>
+
+
 
         {/* RAW MATERIAL SUMMARY — TITLE PAGE */}
         <Page size="A4" style={styles.page}>
