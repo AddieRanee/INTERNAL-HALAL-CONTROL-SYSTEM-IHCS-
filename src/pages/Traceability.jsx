@@ -169,6 +169,7 @@ export default function Traceability({ companyInfoId, companyId }) {
       "product_flow_process",
       "premise_plan",
       "traceability",
+      "profiles",
     ];
 
     const result = {};
@@ -191,41 +192,55 @@ export default function Traceability({ companyInfoId, companyId }) {
     return result;
   };
 
-  const handleGeneratePdf = async () => {
-    if (!resolvedCompanyId) {
-      alert("⚠️ Missing company ID — cannot generate report.");
-      return;
+const handleGeneratePdf = async () => {
+  if (!resolvedCompanyId) {
+    alert("⚠️ Missing company ID — cannot generate report.");
+    return;
+  }
+
+  try {
+    setGenerating(true);
+
+    const freshData = await fetchAllTables();
+
+    if (!freshData || Object.keys(freshData).length === 0) {
+      throw new Error("No data fetched for this company.");
     }
 
-    try {
-      setGenerating(true);
-      const freshData = await fetchAllTables();
+    const docElement = (
+      <IHCSReport
+        allData={freshData}
+        meta={{
+          generatedBy: "IHCS System",
+          generatedAt: new Date().toLocaleString(),
+        }}
+      />
+    );
 
-      if (!freshData || Object.keys(freshData).length === 0) {
-        throw new Error("No data fetched for this company.");
-      }
+    const blob = await pdf(docElement).toBlob();
+    const url = URL.createObjectURL(blob);
 
-      const docElement = (
-        <IHCSReport
-          allData={freshData}
-          meta={{
-            generatedBy: "IHCS System",
-            generatedAt: new Date().toLocaleString(),
-          }}
-        />
-      );
+    // 1️⃣ Preview in new tab
+    window.open(url, "_blank");
 
-      const blob = await pdf(docElement).toBlob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
-    } catch (err) {
-      console.error("Error generating PDF:", err);
-      alert("❌ Error generating PDF: " + (err.message || err));
-    } finally {
-      setGenerating(false);
-    }
-  };
+    // 2️⃣ Force download immediately
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `IHCS_Report_${resolvedCompanyId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
+    // Clean up
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("Error generating PDF:", err);
+    alert("❌ Error generating PDF: " + (err.message || err));
+  } finally {
+    setGenerating(false);
+  }
+};
   const PreviewBox = ({ file, preview, title }) => (
     <div style={previewBoxStyle}>
       {file?.type === "application/pdf" ? (
