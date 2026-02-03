@@ -19,31 +19,31 @@ export default function AboutDashboard() {
       title: "Our Service",
       description: "Discover our solutions",
       type: "page",
-      path: "/about/services",
+      path: "/services",
     },
     {
       title: "Halal Course",
       description: "Training & certification",
       type: "page",
-      path: "/about/halal-course",
+      path: "/halal-courses",
     },
     {
       title: "We Provide",
       description: "Explore resources",
       type: "page",
-      path: "/about/we-provide",
+      path: "/we-provide",
     },
     {
       title: "Staff Background",
       description: "Meet our team",
       type: "page",
-      path: "/about/staff-background",
+      path: "/staff-background",
     },
     {
       title: "News / Updates",
       description: "Latest events & announcements",
       type: "page",
-      path: "/about/news-updates",
+      path: "/news",
     },
   ];
 
