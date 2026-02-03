@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import supabase from "./supabaseClient";
 
 /* 📄 Pages */
@@ -11,11 +11,9 @@ import StaffStatusUpdate from "./pages/StaffStatusUpdate";
 import Auth from "./pages/Auth";
 import RequestAccess from "./pages/RequestAccess";
 import StaffAddInfo from "./pages/AddInfoDashboard";
-
-/* ✅ Reset Password */
 import ResetPassword from "./pages/ResetPassword";
 
-/* 🛠️ Admin Add Pages */
+/* 🛠️ Admin Pages */
 import AddAbout from "./pages/AddAbout";
 import AddOurService from "./pages/AddOurService";
 import AddHalalCourse from "./pages/AddHalalCourse";
@@ -23,7 +21,7 @@ import AddWeProvide from "./pages/AddWeProvide";
 import AddNewsUpdates from "./pages/AddNewsUpdates";
 import AddStaffBackground from "./pages/AddStaffBackground";
 
-/* 📘 Public Pages */
+/* 🌍 Public Pages */
 import AboutPage from "./pages/AboutPage";
 import ServicePage from "./pages/ServicePage";
 import HalalCoursePage from "./pages/HalalCoursePage";
@@ -46,76 +44,122 @@ import Traceability from "./pages/Traceability";
 /* 🧱 Components */
 import Sidebar from "./components/Sidebar";
 
-/* 🔒 AuthRoute */
-function AuthRoute({ user, children }) {
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) navigate("/", { replace: true });
-  }, [user, navigate]);
-
-  return !user ? children : null;
-}
-
-/* 🔐 ProtectedRoute */
-function ProtectedRoute({ allowed, redirectTo = "/auth", element }) {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!allowed) navigate(redirectTo, { replace: true });
-  }, [allowed, navigate, redirectTo]);
-
-  return allowed ? element : null;
-}
-
-/* 🔁 RootRedirect */
-function RootRedirect({ user, role }) {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) navigate("/auth", { replace: true });
-    else if (role === "staff")
-      navigate("/staff-landing-dashboard", { replace: true });
-    else if (role === "client")
-      navigate("/dashboard", { replace: true });
-  }, [user, role, navigate]);
-
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <p className="text-gray-600">Redirecting…</p>
-    </div>
-  );
-}
-
+/* ================================================= */
+/* ================= APP ============================ */
+/* ================================================= */
 export default function App() {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
+
   const location = useLocation();
 
-  /* ✅ LOGOUT HANDLER (ADDED) */
-  const handleLogout = async (navigate) => {
+
+  /* =================================================
+     🔥 Fetch user + role + staff approval
+     (single source of truth for whole app)
+  ================================================= */
+  const fetchUserAndRole = async (session) => {
+    setRoleLoading(true);
+    const currentUser = session?.user ?? null;
+    setUser(currentUser);
+
+    if (!currentUser) {
+      setRole(null);
+      setRoleLoading(false);
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role, staff_approved")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+    if (error || !profile) {
+      console.error("Profile fetch failed:", error);
+      setRole(null);
+      setRoleLoading(false);
+      return;
+    }
+
+    const cleanRole = profile.role?.trim()?.toLowerCase();
+
+    // 🚫 block unapproved staff globally
+    if (cleanRole === "staff" && !profile.staff_approved) {
+      await supabase.auth.signOut();
+      setRole(null);
+      setRoleLoading(false);
+      return;
+    }
+
+    setRole(cleanRole);
+    setRoleLoading(false);
+  };
+
+
+  /* =================================================
+     🔥 Global Auth Listener (NO refresh needed ever)
+  ================================================= */
+useEffect(() => {
+  let mounted = true;
+
+  const init = async () => {
+    const { data } = await supabase.auth.getSession();
+    if (!mounted) return;
+
+    setUser(data.session?.user ?? null);
+
+    if (data.session?.user) {
+      fetchUserAndRole(data.session);
+    } else {
+      setRole(null);
+      setRoleLoading(false);
+    }
+
+    setLoading(false);
+  };
+
+  init();
+
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      if (!mounted) return;
+
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserAndRole(session);
+      } else {
+        setRole(null);
+        setRoleLoading(false);
+      }
+    }
+  );
+
+  return () => {
+    mounted = false;
+    listener.subscription.unsubscribe();
+  };
+}, []);
+
+  /* =================================================
+     Logout
+  ================================================= */
+  const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setRole(null);
-    navigate("/auth", { replace: true });
   };
 
-  /* 🧭 Sidebar visibility */
+
+  /* =================================================
+     Sidebar rules
+  ================================================= */
   const hideSidebarOn = [
     "/auth",
     "/request-access",
-    "/staff-landing-dashboard",
-    "/about-dashboard",
-    "/staff-status-update",
-    "/staff-background",
-    "/staff-add-info",
-    "/add-about",
-    "/add-our-service",
-    "/add-halal-course",
-    "/add-we-provide",
-    "/add-news-updates",
-    "/add-staff-background",
     "/reset-password",
   ];
 
@@ -135,106 +179,91 @@ export default function App() {
 
   const shouldShowSidebar =
     user &&
-    ((role === "client" && !hideSidebarOn.includes(location.pathname)) ||
-      companyPages.includes(location.pathname));
-
-  /* 🧠 Session + role (STABLE VERSION) */
-useEffect(() => {
-  let mounted = true;
-
-  const fetchUserAndRole = async (session) => {
-    const currentUser = session?.user ?? null;
-
-    if (!mounted) return;
-
-    setUser(currentUser);
-
-    if (!currentUser) {
-      setRole(null);
-      return;
-    }
-
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", currentUser.id)
-      .maybeSingle();
-
-    if (!mounted) return;
-
-    if (error) {
-      console.error("Role fetch error:", error);
-      setRole(null);
-    } else {
-      setRole(profile?.role?.trim().toLowerCase() ?? null);
-    }
-  };
-
-  // 1️⃣ Initial load
-  (async () => {
-  try {
-    const { data } = await supabase.auth.getSession();
-    await fetchUserAndRole(data.session);
-  } catch (err) {
-    console.error("getSession failed:", err);
-    setUser(null);
-    setRole(null);
-  } finally {
-    if (mounted) setLoading(false);
-  }
-})();
-
-  // 2️⃣ Auth listener (NO loading control here)
-  const { data: listener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-      fetchUserAndRole(session);
-    }
-  );
-
-  return () => {
-    mounted = false;
-    listener.subscription.unsubscribe();
-  };
-}, []);
+    (
+      (role === "client" && !hideSidebarOn.includes(location.pathname)) ||
+      companyPages.includes(location.pathname)
+    );
 
 
+  /* =================================================
+     Loading screen
+  ================================================= */
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="animate-pulse text-gray-600">Loading…</p>
+        <p className="text-gray-600">Initializing session…</p>
       </div>
     );
   }
 
+
+  /* =================================================
+     Route Guards
+  ================================================= */
+  const RequireAuth = ({ allowedRole, children }) => {
+    if (!user) return <Navigate to="/auth" replace />;
+    if (allowedRole && roleLoading) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-gray-600">Loading profileâ€¦</p>
+        </div>
+      );
+    }
+    if (allowedRole && role !== allowedRole) return <Navigate to="/auth" replace />;
+    return children;
+  };
+
+  const RedirectLoggedIn = ({ children }) => {
+    if (user) {
+      if (roleLoading) {
+        return (
+          <div className="flex items-center justify-center min-h-screen">
+            <p className="text-gray-600">Loading profileâ€¦</p>
+          </div>
+        );
+      }
+      return (
+        <Navigate
+          to={role === "staff" ? "/staff-landing-dashboard" : "/dashboard"}
+          replace
+        />
+      );
+    }
+    return children;
+  };
+
+
+  /* =================================================
+     Routes
+  ================================================= */
   return (
     <div className="flex min-h-screen w-full">
+
       {shouldShowSidebar && <Sidebar />}
 
       <main className="flex-1 min-h-screen w-full overflow-y-auto bg-gray-50">
         <Routes>
 
-          {/* 🔑 Auth */}
-          <Route path="/auth" element={<AuthRoute user={user}><Auth /></AuthRoute>} />
+          {/* Auth */}
+          <Route path="/auth" element={<RedirectLoggedIn><Auth /></RedirectLoggedIn>} />
           <Route path="/request-access" element={<RequestAccess />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* 🧑‍💼 Staff */}
-          <Route
-            path="/staff-landing-dashboard"
-            element={
-              <ProtectedRoute
-                allowed={!!user && role === "staff"}
-                element={<StaffDashboardLanding onLogout={handleLogout} />}
-              />
-            }
-            
-          />
-          <Route path="/about-dashboard" element={<AboutDashboard />} />
-          <Route path="/staff-add-info" element={<ProtectedRoute allowed={!!user && role === "staff"} element={<StaffAddInfo />} />} />
-          <Route path="/staff-background" element={<ProtectedRoute allowed={!!user && role === "staff"} element={<StaffBackgroundPage />} />} />
-          <Route path="/staff-status-update" element={<ProtectedRoute allowed={!!user && role === "staff"} element={<StaffStatusUpdate />} />} />
+          {/* Staff */}
+          <Route path="/staff-landing-dashboard" element={
+            <RequireAuth allowedRole="staff">
+              <StaffDashboardLanding onLogout={handleLogout} />
+            </RequireAuth>
+          } />
 
-          {/* 🛠️ Admin */}
+          <Route path="/staff-add-info" element={<RequireAuth allowedRole="staff"><StaffAddInfo /></RequireAuth>} />
+          <Route path="/staff-background" element={<RequireAuth allowedRole="staff"><StaffBackgroundPage /></RequireAuth>} />
+          <Route path="/staff-status-update" element={<RequireAuth allowedRole="staff"><StaffStatusUpdate /></RequireAuth>} />
+
+          {/* Shared (Client + Staff) */}
+          <Route path="/about-dashboard" element={<RequireAuth><AboutDashboard /></RequireAuth>} />
+
+          {/* Admin */}
           <Route path="/add-about" element={<AddAbout />} />
           <Route path="/add-our-service" element={<AddOurService />} />
           <Route path="/add-halal-course" element={<AddHalalCourse />} />
@@ -242,22 +271,14 @@ useEffect(() => {
           <Route path="/add-news-updates" element={<AddNewsUpdates />} />
           <Route path="/add-staff-background" element={<AddStaffBackground />} />
 
-          {/* 🌍 Public Pages */}
+          {/* Public */}
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicePage />} />
           <Route path="/halal-courses" element={<HalalCoursePage />} />
           <Route path="/we-provide" element={<WeProvidePage />} />
           <Route path="/news" element={<NewsUpdatesPage />} />
-          <Route path="/staff-background-public" element={<StaffBackgroundPage />} />
 
-          {/* ✅ AboutDashboard URL support */}
-          <Route path="/about/services" element={<ServicePage />} />
-          <Route path="/about/halal-course" element={<HalalCoursePage />} />
-          <Route path="/about/we-provide" element={<WeProvidePage />} />
-          <Route path="/about/news-updates" element={<NewsUpdatesPage />} />
-          <Route path="/about/staff-background" element={<StaffBackgroundPage />} />
-
-          {/* 🏢 Company */}
+          {/* Company */}
           <Route path="/companyinfo" element={<CompanyInfo />} />
           <Route path="/Company-Background" element={<CompanyBackground />} />
           <Route path="/halalpolicy" element={<HalalPolicy />} />
@@ -270,13 +291,21 @@ useEffect(() => {
           <Route path="/rawmaterialsummary" element={<RawMaterialSummary />} />
           <Route path="/traceability" element={<Traceability />} />
 
-          {/* 🧍 Client */}
-          <Route path="/dashboard" element={<ProtectedRoute allowed={!!user && role === "client"} element={<WelcomePage />} />} />
+          {/* Client */}
+          <Route path="/dashboard" element={<RequireAuth allowedRole="client"><WelcomePage /></RequireAuth>} />
 
-          {/* 🔁 Root */}
-          <Route path="/" element={<RootRedirect user={user} role={role} />} />
+          {/* Root */}
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to={user ? (role === "staff" ? "/staff-landing-dashboard" : "/dashboard") : "/auth"}
+                replace
+              />
+            }
+          />
 
-          {/* ❌ 404 */}
+          {/* 404 */}
           <Route
             path="*"
             element={
@@ -285,12 +314,13 @@ useEffect(() => {
               </div>
             }
           />
-
         </Routes>
       </main>
     </div>
   );
 }
+
+
 
 
 
@@ -328,3 +358,4 @@ useEffect(() => {
 
 // mysparktrack@gmail.com
 // maddiemike03@gmail.com
+//m-6147680@moe-dl.edu.my
