@@ -1,284 +1,348 @@
 // src/pages/Auth.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
 
-// === Images ===
+// Assets
 import logo from "../assets/logo.png";
 
-// === Components ===
+// Components
 import GradientText from "../components/GradientText";
 import Silk from "../components/Silk";
 
-// ========== Shimmer Button ==========
+// Shimmer Button
 const ShimmerButton = ({ children, onClick, type = "button", gradient, disabled }) => (
   <button
     type={type}
     onClick={onClick}
     disabled={disabled}
-    className={`relative w-full py-3 rounded-xl font-bold text-white shadow-lg overflow-hidden group transition-transform ${
+    className={`relative w-full py-3 rounded-xl font-bold text-white shadow-lg overflow-hidden transition-transform ${
       disabled ? "opacity-60 cursor-not-allowed" : "hover:scale-[1.03]"
     } ${gradient}`}
   >
-    <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></span>
+    <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
     <span className="relative z-10">{children}</span>
   </button>
 );
 
-// ========== Main Auth Component ==========
 export default function AuthUI() {
   const navigate = useNavigate();
 
-  const [authType, setAuthType] = useState(null); // staff | client
+  // UI state
+  const [authType, setAuthType] = useState(""); // "staff" | "client"
   const [isRegister, setIsRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
+  // Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const [firstName, setFirstName] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setPassword("");
+    setShowPassword(false);
+  };
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((v) => (v > 0 ? v - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   // ===== Forgot Password =====
   const handleForgotPassword = async () => {
-    if (!email) {
-      alert("Please enter your email first");
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
-
-      alert("Password reset link sent. Check your email 📩");
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "Failed to send reset email");
-    }
+    if (!email) return alert("Please enter your email first");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) alert(error.message);
+    else alert("Password reset email sent 📩");
   };
 
-  // ===== Login / Register =====
-  const handleAuth = async (e) => {
-    e.preventDefault();
+  // ===== Register =====
+const handleRegister = async () => {
+  if (!authType) throw new Error("Please choose Staff or Client");
+  setLoading(true);
+
+  try {
+    // 1️⃣ Sign up user and send metadata for profile
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth`,
+        data: {
+          first_name: firstName || null,
+          company_name: authType === "client" ? companyName || null : null,
+          role: authType,
+          staff_approved: authType === "staff" ? false : true,
+        },
+      },
+    });
+
+    if (signUpError) throw signUpError;
+    if (!signUpData?.user?.id) throw new Error("Signup failed, no user returned");
+
+    const userId = signUpData.user.id;
+
+    // 2️⃣ Insert profile manually
+    await supabase.from("profiles").insert({
+      id: userId,
+      role: authType,
+      first_name: firstName || null,
+      company_name: authType === "client" ? companyName || null : null,
+      staff_approved: authType === "staff" ? false : true,
+      email: email,
+    });
+
+    // 3️⃣ Staff vs client messaging
+    if (authType === "staff") {
+      alert("Staff request submitted. Await admin approval.");
+    } else {
+      alert("Registration successful! Please login to continue.");
+    }
+
+    // 4️⃣ Reset form & go back to auth selection
+    setIsRegister(false);
+    setAuthType(""); // back to main auth page
+    resetForm();
+
+  } catch (err) {
+    console.error(err);
+    const message = err?.message || "Something went wrong during registration";
+    if (message.toLowerCase().includes("rate limit")) {
+      alert("Too many attempts. Please wait a moment and try again.");
+      setCooldown(10);
+    } else {
+      alert(message);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // ===== Login =====
+  const handleLogin = async () => {
     setLoading(true);
-
     try {
-      // === REGISTER ===
-      if (isRegister) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-
-        alert("Signup successful! Please check your email to confirm before logging in.");
-        setLoading(false);
-        return;
-      }
-
-      // === LOGIN ===
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      if (!data?.user) throw new Error("Login failed");
 
-      const user = data?.user ?? data?.session?.user;
-      if (!user) throw new Error("Login failed. No user returned.");
+      await supabase.auth.getSession();
 
-      const userId = user.id;
-      const chosen = authType?.toLowerCase();
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role, staff_approved")
+        .eq("id", data.user.id)
+        .single();
+      if (profileError) throw profileError;
 
-      // === FAST REDIRECT ===
-      if (chosen === "staff") {
-        window.location.replace("/staff-landing-dashboard");
-      } else if (chosen === "client") {
-        window.location.replace("/dashboard");
-      } else {
-        (async () => {
-          try {
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("role")
-              .eq("id", userId)
-              .maybeSingle();
-
-            const role = profile?.role?.toLowerCase();
-            if (role === "staff") window.location.replace("/staff-landing-dashboard");
-            else if (role === "client") window.location.replace("/dashboard");
-            else alert("Role not defined. Contact admin.");
-          } catch {
-            alert("Unable to determine role. Contact admin.");
-          }
-        })();
+      if (profile.role === "staff" && !profile.staff_approved) {
+        await supabase.auth.signOut();
+        throw new Error("Staff account pending admin approval");
       }
 
-      // === Background profile insert (non-blocking) ===
-      setTimeout(async () => {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", userId)
-          .maybeSingle();
-
-        if (!profile) {
-          await supabase.from("profiles").insert({
-            id: userId,
-            role: (authType || "client").toLowerCase(),
-            first_name: firstName || null,
-            company_name: authType === "client" ? companyName || null : null,
-          });
-        }
-      }, 0);
+      navigate(profile.role === "staff" ? "/staff-landing-dashboard" : "/dashboard", { replace: true });
     } catch (err) {
       console.error(err);
-      alert(err.message || "Something went wrong");
+      const message = err?.message || "Login failed";
+      if (message.toLowerCase().includes("email not confirmed")) {
+        alert("Your email is not confirmed yet. Please check your inbox and confirm, then try again.");
+      } else if (message.toLowerCase().includes("rate limit")) {
+        alert("Too many attempts. Please wait a moment and try again.");
+      } else {
+        alert(message);
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  // ===== Submit Handler =====
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    if (!authType) return alert("Please choose Staff or Client");
+
+    if (isRegister) await handleRegister();
+    else await handleLogin();
+  };
+
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-gray-950 overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <Silk color="#0d47a1" speed={5} noiseIntensity={1.5} scale={1.2} />
       </div>
 
-      {/* Auth Card */}
-      <div className="relative z-10 flex flex-col items-center w-full max-w-5xl mx-auto px-4">
-        <div className="flex-1 max-w-md w-full bg-white rounded-3xl shadow-2xl p-8">
-          <img src={logo} alt="Logo" className="mx-auto w-40 mb-6 animate-pulse" />
+      <div className="relative z-10 w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+        <img src={logo} alt="Logo" className="mx-auto w-36 mb-6" />
 
-          {!authType ? (
-            <div className="text-center">
-              <GradientText
-                colors={["#3b82f6", "#8b5cf6", "#ef4444"]}
-                animationSpeed={6}
-                className="text-4xl font-extrabold mb-2"
+        {!authType ? (
+          <div className="text-center space-y-8">
+            <GradientText
+              colors={["#3b82f6", "#8b5cf6", "#ef4444"]}
+              className="text-4xl font-extrabold"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+            >
+              Welcome to IHCS
+            </GradientText>
+
+            <div className="grid grid-cols-1 gap-6 mt-2">
+              <button
+                type="button"
+                onClick={() => setAuthType("staff")}
+                className="w-full text-left rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-5 shadow-lg hover:shadow-xl transition-all"
               >
-                Welcome
-              </GradientText>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div
+                      className="text-lg font-extrabold"
+                      style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                    >
+                      Staff Sign-In
+                    </div>
+                    <div className="text-sm text-indigo-100">
+                      Internal team access
+                    </div>
+                  </div>
+                  <div className="h-9 w-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-semibold">
+                    ST
+                  </div>
+                </div>
+              </button>
 
-              <p className="text-gray-600 mt-2">
-                Choose your portal to continue
-              </p>
-
-              <div className="mt-6 space-y-4">
-                <ShimmerButton
-                  gradient="bg-gradient-to-r from-indigo-500 to-purple-600"
-                  onClick={() => setAuthType("staff")}
-                >
-                  Staff Portal
-                </ShimmerButton>
-
-                <ShimmerButton
-                  gradient="bg-gradient-to-r from-blue-500 to-indigo-600"
-                  onClick={() => setAuthType("client")}
-                >
-                  Client Portal
-                </ShimmerButton>
-              </div>
+              <button
+                type="button"
+                onClick={() => setAuthType("client")}
+                className="w-full text-left rounded-2xl border border-blue-200 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-5 shadow-lg hover:shadow-xl transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div
+                      className="text-lg font-extrabold"
+                      style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                    >
+                      Client Sign-In
+                    </div>
+                    <div className="text-sm text-blue-100">
+                      Company access
+                    </div>
+                  </div>
+                  <div className="h-9 w-9 rounded-full bg-white/20 flex items-center justify-center text-xs font-semibold">
+                    CL
+                  </div>
+                </div>
+              </button>
             </div>
-          ) : (
-            <form onSubmit={handleAuth} className="space-y-6">
-              <GradientText
-                colors={["#3b82f6", "#8b5cf6", "#ef4444"]}
-                animationSpeed={6}
-                className="text-3xl font-extrabold text-center"
-              >
-                {isRegister ? `Register as ${authType}` : `Sign in to ${authType}`}
-              </GradientText>
+          </div>
+        ) : (
+          <form onSubmit={handleAuth} className="space-y-6">
+            <GradientText
+              colors={["#3b82f6", "#8b5cf6", "#ef4444"]}
+              className="text-3xl font-extrabold text-center"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+            >
+              {isRegister
+                ? authType === "staff"
+                  ? "Staff Registration"
+                  : "Client Registration"
+                : authType === "staff"
+                ? "Staff Sign-In"
+                : "Client Sign-In"}
+            </GradientText>
 
-              {isRegister && (
-                <>
+            {isRegister && (
+              <>
+                <input
+                  type="text"
+                  placeholder="First Name (optional)"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-100 border"
+                />
+                {authType === "client" && (
                   <input
                     type="text"
-                    placeholder="First Name (optional)"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-300"
+                    placeholder="Company Name"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-gray-100 border"
                   />
+                )}
+              </>
+            )}
 
-                  {authType === "client" && (
-                    <input
-                      type="text"
-                      placeholder="Company Name"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-300"
-                    />
-                  )}
-                </>
-              )}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-gray-100 border"
+              required
+            />
 
+            <div className="relative">
               <input
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-300"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 pr-16 rounded-xl bg-gray-100 border"
+                required
               />
-
-              {/* PASSWORD */}
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-16 rounded-xl bg-gray-100 border border-gray-300"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-indigo-500 hover:text-indigo-700"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
-
-              {/* FORGOT PASSWORD */}
-              {!isRegister && (
-                <p
-                  className="text-right text-sm text-indigo-500 cursor-pointer hover:underline"
-                  onClick={handleForgotPassword}
-                >
-                  Forgot password?
-                </p>
-              )}
-
-              <ShimmerButton
-                type="submit"
-                gradient="bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-600"
-                disabled={loading}
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-indigo-500"
               >
-                {loading ? "Processing..." : isRegister ? "Register" : "Sign In"}
-              </ShimmerButton>
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
 
-              <p className="text-center text-sm text-gray-600">
-                {isRegister ? "Already have an account?" : "Don’t have an account?"}{" "}
-                <span
-                  className="text-indigo-500 hover:underline cursor-pointer"
-                  onClick={() => setIsRegister(!isRegister)}
-                >
-                  {isRegister ? "Sign In" : "Register"}
-                </span>
+            {!isRegister && (
+              <p className="text-right text-sm text-indigo-500 cursor-pointer" onClick={handleForgotPassword}>
+                Forgot password?
               </p>
+            )}
 
-              <p
-                className="text-center text-xs text-gray-500 cursor-pointer hover:text-gray-700"
-                onClick={() => {
-                  setAuthType(null);
-                  setIsRegister(false);
-                }}
-              >
-                ← Back to portal selection
-              </p>
-            </form>
-          )}
-        </div>
+            <ShimmerButton
+              type="submit"
+              disabled={loading || (isRegister && cooldown > 0)}
+              gradient="bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-600"
+            >
+              {loading
+                ? "Processing..."
+                : isRegister && cooldown > 0
+                  ? `Wait ${cooldown}s`
+                  : isRegister
+                    ? "Register"
+                    : "Sign In"}
+            </ShimmerButton>
+
+            <p className="text-center text-sm">
+              {isRegister ? "Already have an account?" : "No account?"}{" "}
+              <span className="text-indigo-500 cursor-pointer" onClick={() => setIsRegister((v) => !v)}>
+                {isRegister ? "Sign In" : "Register"}
+              </span>
+            </p>
+
+            <p
+              className="text-center text-xs cursor-pointer text-gray-500"
+              onClick={() => {
+                setAuthType("");
+                setIsRegister(false);
+                resetForm();
+              }}
+            >
+              ← Back
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );
