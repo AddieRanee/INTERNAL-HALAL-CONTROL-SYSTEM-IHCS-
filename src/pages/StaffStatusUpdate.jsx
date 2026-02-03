@@ -47,6 +47,7 @@ export default function StaffStatusUpdate() {
 
     const requestsWithUrls = await Promise.all(
       (data || []).map(async (req) => {
+        const normalizedStatus = (req.status || "pending").toLowerCase();
         if (req.file_path) {
           try {
             const { data: signedData } = await supabase.storage
@@ -55,13 +56,14 @@ export default function StaffStatusUpdate() {
 
             return {
               ...req,
+              status: normalizedStatus,
               signed_url: signedData?.signedUrl || null,
             };
           } catch {
-            return { ...req, signed_url: null };
+            return { ...req, status: normalizedStatus, signed_url: null };
           }
         }
-        return { ...req, signed_url: null };
+        return { ...req, status: normalizedStatus, signed_url: null };
       })
     );
 
@@ -81,6 +83,12 @@ export default function StaffStatusUpdate() {
       return;
     }
 
+    setRequests((prev) =>
+      prev.map((req) =>
+        req.id === requestId ? { ...req, status: newStatus } : req
+      )
+    );
+
     showToast(
       newStatus === "approved"
         ? "✅ Request approved successfully!"
@@ -90,8 +98,8 @@ export default function StaffStatusUpdate() {
   };
 
   // ✅ EXTRA FUNCTION (the one you asked for)
-  const isActionDisabled = (status) => {
-    return status === "approved" || status === "rejected";
+  const isActionDisabled = (status, action) => {
+    return status === action;
   };
 
   const showToast = (message, type) => {
@@ -183,33 +191,117 @@ export default function StaffStatusUpdate() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white shadow-lg rounded-2xl mx-6 mb-10 overflow-hidden">
-        <h2 className="text-2xl font-bold p-6 border-b bg-blue-50 text-blue-700">
-          Access Requests
-        </h2>
+      {/* Cards */}
+      <div className="mx-6 mb-10">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-blue-700">
+            Access Requests
+          </h2>
+          <div className="text-sm text-gray-500">
+            {filteredRequests.length} request{filteredRequests.length === 1 ? "" : "s"}
+          </div>
+        </div>
 
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-4">Company Name</th>
-              <th className="p-4">Contact No.</th>
-              <th className="p-4">Reason</th>
-              <th className="p-4">Uploaded File</th>
-              <th className="p-4">Status</th>
-              <th className="p-4 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRequests.map((req, index) => (
-              <tr
-                key={req.id}
-                className={index % 2 ? "bg-gray-50" : "bg-white"}
-              >
-                <td className="p-4 font-semibold">{req.company_name}</td>
-                <td className="p-4">{req.contact_number}</td>
-                <td className="p-4">{req.reason || "—"}</td>
-                <td className="p-4">
+        {/* Records Table */}
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden mb-8">
+          <div className="px-6 py-4 border-b bg-blue-50">
+            <h3 className="text-lg font-semibold text-blue-700">
+              Records Table
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-4 text-left">Company Name</th>
+                  <th className="p-4 text-left">Contact No.</th>
+                  <th className="p-4 text-left">Reason</th>
+                  <th className="p-4 text-left">Uploaded File</th>
+                  <th className="p-4 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRequests.map((req, index) => (
+                  <tr
+                    key={req.id}
+                    className={index % 2 ? "bg-gray-50" : "bg-white"}
+                  >
+                    <td className="p-4 font-semibold">{req.company_name}</td>
+                    <td className="p-4">{req.contact_number}</td>
+                    <td className="p-4">{req.reason || "—"}</td>
+                    <td className="p-4">
+                      {req.signed_url ? (
+                        <a
+                          href={req.signed_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          {req.file_path?.split("/").pop()}
+                        </a>
+                      ) : (
+                        "No file"
+                      )}
+                    </td>
+                    <td className="p-4 capitalize">{req.status || "pending"}</td>
+                  </tr>
+                ))}
+                {filteredRequests.length === 0 && (
+                  <tr>
+                    <td className="p-6 text-center text-gray-500" colSpan={5}>
+                      No records found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredRequests.map((req) => (
+            <div
+              key={req.id}
+              className={`border rounded-2xl shadow-sm hover:shadow-lg transition-shadow ${
+                req.status === "approved"
+                  ? "bg-green-50 border-green-200"
+                  : req.status === "rejected"
+                  ? "bg-red-50 border-red-200"
+                  : "bg-white border-gray-100"
+              }`}
+            >
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {req.company_name}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {req.contact_number || "No contact number"}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                      req.status === "approved"
+                        ? "bg-green-100 text-green-700"
+                        : req.status === "rejected"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {req.status || "pending"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-3">
+                <div className="text-sm text-gray-700">
+                  <span className="font-semibold text-gray-900">Reason:</span>{" "}
+                  {req.reason || "—"}
+                </div>
+
+                <div className="text-sm">
+                  <span className="font-semibold text-gray-900">File:</span>{" "}
                   {req.signed_url ? (
                     <a
                       href={req.signed_url}
@@ -220,62 +312,40 @@ export default function StaffStatusUpdate() {
                       {req.file_path?.split("/").pop()}
                     </a>
                   ) : (
-                    "No file"
+                    <span className="text-gray-500">No file</span>
                   )}
-                </td>
-                <td className="p-4 capitalize">{req.status || "pending"}</td>
-                <td className="p-4">
-                  <div className="flex gap-2 justify-center">
-                    <button
-                      disabled={isActionDisabled(req.status)}
-                      onClick={() =>
-                        handleStatusChange(req.id, "approved")
-                      }
-                      className={`px-3 py-1 rounded-lg text-white ${
-                        req.status === "approved"
-                          ? "bg-green-300 cursor-not-allowed"
-                          : "bg-green-500 hover:bg-green-600"
-                      }`}
-                    >
-                      <CheckCircle size={16} /> Approve
-                    </button>
+                </div>
 
-                    <button
-                      disabled={isActionDisabled(req.status)}
-                      onClick={() =>
-                        handleStatusChange(req.id, "rejected")
-                      }
-                      className={`px-3 py-1 rounded-lg text-white ${
-                        req.status === "rejected"
-                          ? "bg-red-300 cursor-not-allowed"
-                          : "bg-red-500 hover:bg-red-600"
-                      }`}
-                    >
-                      <XCircle size={16} /> Reject
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    disabled={isActionDisabled(req.status, "approved")}
+                    onClick={() => handleStatusChange(req.id, "approved")}
+                    className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-white ${
+                      req.status === "approved"
+                        ? "bg-green-300 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700"
+                    }`}
+                  >
+                    <CheckCircle size={16} /> Approve
+                  </button>
 
-      {/* Approved list */}
-      {approved.length > 0 && (
-        <div className="bg-green-50 p-6 mx-6 rounded-2xl mb-10">
-          <h2 className="text-xl font-bold text-green-700 mb-4">
-            ✅ Approved Companies
-          </h2>
-          <ul>
-            {approved.map((r) => (
-              <li key={r.id}>
-                {r.company_name} – {r.contact_number}
-              </li>
-            ))}
-          </ul>
+                  <button
+                    disabled={isActionDisabled(req.status, "rejected")}
+                    onClick={() => handleStatusChange(req.id, "rejected")}
+                    className={`flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-white ${
+                      req.status === "rejected"
+                        ? "bg-red-300 cursor-not-allowed"
+                        : "bg-red-600 hover:bg-red-700"
+                    }`}
+                  >
+                    <XCircle size={16} /> Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
       <img src={IhcsFooter} alt="IHCS Footer" className="w-full mt-auto" />
     </div>
