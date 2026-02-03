@@ -110,7 +110,7 @@ export default function RequestAccess() {
         contact_number: contactNumber,
         reason: finalReason,
         file_path: filePath,
-        status: "Pending",
+        status: "pending",
       },
     ]);
 
