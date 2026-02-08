@@ -121,8 +121,8 @@ export default function WelcomePage() {
       case "rejected":
         return (
           <div className="flex items-center justify-center gap-3 bg-red-50 text-red-700 border border-red-300 rounded-xl py-3 px-5 text-sm font-medium shadow-md mt-8">
-            <XCircle size={18} /> Your request was rejected. Please contact the
-            admin.
+            <XCircle size={18} /> Your request was rejected. Please email
+            kazai about this issue.
           </div>
         );
 
