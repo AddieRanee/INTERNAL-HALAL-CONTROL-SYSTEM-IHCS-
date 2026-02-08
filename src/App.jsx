@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import supabase from "./supabaseClient";
 
 /* 📄 Pages */
@@ -53,8 +53,10 @@ export default function App() {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [roleLoading, setRoleLoading] = useState(true);
+  const [clientApproved, setClientApproved] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
 
   /* =================================================
@@ -68,6 +70,7 @@ export default function App() {
 
     if (!currentUser) {
       setRole(null);
+      setClientApproved(false);
       setRoleLoading(false);
       return;
     }
@@ -80,8 +83,12 @@ export default function App() {
 
     if (error || !profile) {
       console.error("Profile fetch failed:", error);
+      await supabase.auth.signOut();
+      setUser(null);
       setRole(null);
+      setClientApproved(false);
       setRoleLoading(false);
+      navigate("/auth", { replace: true });
       return;
     }
 
@@ -91,11 +98,30 @@ export default function App() {
     if (cleanRole === "staff" && !profile.staff_approved) {
       await supabase.auth.signOut();
       setRole(null);
+      setClientApproved(false);
       setRoleLoading(false);
       return;
     }
 
     setRole(cleanRole);
+    if (cleanRole === "client") {
+      const { data: access, error: accessError } = await supabase
+        .from("access_requests")
+        .select("status, created_at")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (accessError) {
+        console.error("Access request fetch failed:", accessError);
+        setClientApproved(false);
+      } else {
+        setClientApproved((access?.status || "").toLowerCase() === "approved");
+      }
+    } else {
+      setClientApproved(false);
+    }
     setRoleLoading(false);
   };
 
@@ -103,7 +129,7 @@ export default function App() {
   /* =================================================
      🔥 Global Auth Listener (NO refresh needed ever)
   ================================================= */
-useEffect(() => {
+  useEffect(() => {
   let mounted = true;
 
   const init = async () => {
@@ -116,6 +142,7 @@ useEffect(() => {
       fetchUserAndRole(data.session);
     } else {
       setRole(null);
+      setClientApproved(false);
       setRoleLoading(false);
     }
 
@@ -133,6 +160,7 @@ useEffect(() => {
         fetchUserAndRole(session);
       } else {
         setRole(null);
+        setClientApproved(false);
         setRoleLoading(false);
       }
     }
@@ -144,6 +172,28 @@ useEffect(() => {
   };
 }, []);
 
+  useEffect(() => {
+    if (!user || role !== "client") return;
+
+    const channel = supabase
+      .channel("client-access-status")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "access_requests" },
+        (payload) => {
+          if (payload.new?.user_id === user.id) {
+            const status = (payload.new.status || "").toLowerCase();
+            setClientApproved(status === "approved");
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, role]);
+
   /* =================================================
      Logout
   ================================================= */
@@ -151,6 +201,7 @@ useEffect(() => {
     await supabase.auth.signOut();
     setUser(null);
     setRole(null);
+    setClientApproved(false);
   };
 
 
@@ -163,26 +214,11 @@ useEffect(() => {
     "/reset-password",
   ];
 
-  const companyPages = [
-    "/companyinfo",
-    "/Company-Background",
-    "/halalpolicy",
-    "/organisationalchart",
-    "/premiseplan",
-    "/ProductFlowChartRaw",
-    "/productflowprocess",
-    "/productlist",
-    "/rawmaterialmaster",
-    "/rawmaterialsummary",
-    "/traceability",
-  ];
-
   const shouldShowSidebar =
     user &&
-    (
-      (role === "client" && !hideSidebarOn.includes(location.pathname)) ||
-      companyPages.includes(location.pathname)
-    );
+    role === "client" &&
+    clientApproved &&
+    !hideSidebarOn.includes(location.pathname);
 
 
   /* =================================================
@@ -210,6 +246,32 @@ useEffect(() => {
       );
     }
     if (allowedRole && role !== allowedRole) return <Navigate to="/auth" replace />;
+    return children;
+  };
+
+  const RequireClientApproved = ({ children }) => {
+    if (!user) return <Navigate to="/auth" replace />;
+    if (roleLoading) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-gray-600">Loading profileÃ¢â‚¬Â¦</p>
+        </div>
+      );
+    }
+    if (role !== "client") return <Navigate to="/auth" replace />;
+    if (!clientApproved) {
+      return (
+        <div className="flex items-center justify-center min-h-screen px-6">
+          <div className="max-w-xl w-full bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-2xl p-6 text-center shadow-sm">
+            <h2 className="text-xl font-bold mb-2">Access Pending Approval</h2>
+            <p className="text-sm">
+              Your request has not been approved yet. Please wait for approval
+              or email kazai if you believe this is an error.
+            </p>
+          </div>
+        </div>
+      );
+    }
     return children;
   };
 
@@ -257,7 +319,7 @@ useEffect(() => {
           } />
 
           <Route path="/staff-add-info" element={<RequireAuth allowedRole="staff"><StaffAddInfo /></RequireAuth>} />
-          <Route path="/staff-background" element={<RequireAuth allowedRole="staff"><StaffBackgroundPage /></RequireAuth>} />
+          <Route path="/staff-background" element={<RequireAuth><StaffBackgroundPage /></RequireAuth>} />
           <Route path="/staff-status-update" element={<RequireAuth allowedRole="staff"><StaffStatusUpdate /></RequireAuth>} />
 
           {/* Shared (Client + Staff) */}
@@ -279,17 +341,17 @@ useEffect(() => {
           <Route path="/news" element={<NewsUpdatesPage />} />
 
           {/* Company */}
-          <Route path="/companyinfo" element={<CompanyInfo />} />
-          <Route path="/Company-Background" element={<CompanyBackground />} />
-          <Route path="/halalpolicy" element={<HalalPolicy />} />
-          <Route path="/organisationalchart" element={<OrganisationalChart />} />
-          <Route path="/premiseplan" element={<PremisePlan />} />
-          <Route path="/ProductFlowChartRaw" element={<ProductFlowChartRaw />} />
-          <Route path="/productflowprocess" element={<ProductFlowProcess />} />
-          <Route path="/productlist" element={<ProductList />} />
-          <Route path="/rawmaterialmaster" element={<RawMaterialMaster />} />
-          <Route path="/rawmaterialsummary" element={<RawMaterialSummary />} />
-          <Route path="/traceability" element={<Traceability />} />
+          <Route path="/companyinfo" element={<RequireClientApproved><CompanyInfo /></RequireClientApproved>} />
+          <Route path="/Company-Background" element={<RequireClientApproved><CompanyBackground /></RequireClientApproved>} />
+          <Route path="/halalpolicy" element={<RequireClientApproved><HalalPolicy /></RequireClientApproved>} />
+          <Route path="/organisationalchart" element={<RequireClientApproved><OrganisationalChart /></RequireClientApproved>} />
+          <Route path="/premiseplan" element={<RequireClientApproved><PremisePlan /></RequireClientApproved>} />
+          <Route path="/ProductFlowChartRaw" element={<RequireClientApproved><ProductFlowChartRaw /></RequireClientApproved>} />
+          <Route path="/productflowprocess" element={<RequireClientApproved><ProductFlowProcess /></RequireClientApproved>} />
+          <Route path="/productlist" element={<RequireClientApproved><ProductList /></RequireClientApproved>} />
+          <Route path="/rawmaterialmaster" element={<RequireClientApproved><RawMaterialMaster /></RequireClientApproved>} />
+          <Route path="/rawmaterialsummary" element={<RequireClientApproved><RawMaterialSummary /></RequireClientApproved>} />
+          <Route path="/traceability" element={<RequireClientApproved><Traceability /></RequireClientApproved>} />
 
           {/* Client */}
           <Route path="/dashboard" element={<RequireAuth allowedRole="client"><WelcomePage /></RequireAuth>} />
@@ -359,4 +421,4 @@ useEffect(() => {
 
 // mysparktrack@gmail.com
 // maddiemike03@gmail.com
-//m-6147680@moe-dl.edu.my
+// m-6147680@moe-dl.edu.my
